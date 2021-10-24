@@ -12,14 +12,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@babel/core": "^7.15.8",
-    "@babel/node": "^7.15.8",
-    "@babel/preset-env": "^7.15.8",
-    "nodemon": "^2.0.14"
-  },
   "dependencies": {
-    "babel-node": "^0.0.1-security",
     "express": "^4.17.1",
     "sequelize": "^6.7.0"
   }
