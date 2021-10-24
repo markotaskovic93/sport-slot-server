@@ -1,9 +1,8 @@
 import express from 'express'
-import sequelize from './drivers/db/database'
 const app = express()
 
 app.get('/', (req, res) => {
-    console.log('what is DB: ', sequelize)
+    res.send('SAMO NESTO PRIKAZI JEBENO VISE !!!')
 })
 
 app.listen(process.env.PORT || 4500, () => {
