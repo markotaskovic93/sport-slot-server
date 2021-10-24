@@ -1,8 +1,10 @@
 const express = require('express')
+const User = require('./src/main.js');
 const app = express()
 
+
 app.get('/', (req, res) => {
-    res.send('SAMO NESTO PRIKAZI JEBENO VISE !!!')
+    res.send(User.getFullName())
 })
 
 app.listen(process.env.PORT || 4500, () => {
