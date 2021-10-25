@@ -3,12 +3,7 @@ const sequelize = require('./src/drivers/db/database.js')
 const app = express()
 
 app.get('/', (req, res) => {
-    try {
-        sequelize.authenticate()
-        res.send('sve je ok sa konekcijom')
-    } catch (error) {
-        console.log('ne postoji konekcija')
-    }
+    res.send('staje sad mamu ti mrtvu jebem')
 })
 
 app.listen(process.env.PORT || 4500, () => {
