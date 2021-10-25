@@ -1,10 +1,14 @@
 const express = require('express')
-const User = require('./src/main.js');
+const sequelize = require('./src/drivers/db/database.js')
 const app = express()
 
-
 app.get('/', (req, res) => {
-    res.send(User.getFullName())
+    try {
+        sequelize.authenticate()
+        res.send('sve je ok sa konekcijom')
+    } catch (error) {
+        console.log('ne postoji konekcija')
+    }
 })
 
 app.listen(process.env.PORT || 4500, () => {
