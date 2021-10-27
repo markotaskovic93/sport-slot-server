@@ -1,12 +1,28 @@
 const express = require('express')
-//const sequelize = require('./src/drivers/db/database.js')
 const app = express()
+const { getAllPlayers, getPlayer } = require('./controllers/PlayerController.js')
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE')
+    next()
+});
 
 app.get('/', (req, res) => {
-    res.send('staje sad mamu ti mrtvu jebem')
+    res.send({
+        name: "Marko",
+        lastName: "Taskovic"
+    })
+    //getAllPlayers(req, res)
 })
 
-app.listen(process.env.PORT || 4500, () => {
-    console.log('app is running on port 4500')
+app.get('/create-player', (req, res) => {
+    console.log('create player endpoint')
+})
+
+app.listen(process.env.PORT || 3000, () => {
+    console.log('app is running on port 3000')
 })
 
