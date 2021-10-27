@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-const db = require('./models/index.js')
 const { getAllPlayers, getPlayer } = require('./controllers/PlayerController.js')
 
 app.use(express.json())
@@ -12,7 +11,11 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-    getAllPlayers(req, res)
+    res.send({
+        name: "Marko",
+        lastName: "Taskovic"
+    })
+    //getAllPlayers(req, res)
 })
 
 app.get('/create-player', (req, res) => {
