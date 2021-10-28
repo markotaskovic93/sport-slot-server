@@ -14,14 +14,19 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Player.init({
+    id: {
+      primaryKey: true,
+      type: DataTypes.BIGINT
+    },
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
-    birthday: DataTypes.DATE,
-    height: DataTypes.DECIMAL,
+    birthday: DataTypes.STRING,
+    avatar: DataTypes.STRING,
+    height: DataTypes.STRING,
     address: DataTypes.STRING,
-    email: DataTypes.STRING,
+    email: DataTypes.STRING, 
     phone: DataTypes.INTEGER,
-    password: DataTypes.CHAR,
+    password: DataTypes.STRING,
     bio: DataTypes.TEXT,
     verified: DataTypes.BOOLEAN,
     blocked: DataTypes.BOOLEAN

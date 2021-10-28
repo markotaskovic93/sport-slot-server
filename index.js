@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const { getAllPlayers, getPlayer } = require('./controllers/PlayerController.js')
+const router = require('./routes/routes.js') 
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -11,16 +11,10 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-    res.send({
-        name: "Marko",
-        lastName: "Taskovic"
-    })
-    //getAllPlayers(req, res)
+    res.send({message: 'api server is up and running'})
 })
 
-app.get('/create-player', (req, res) => {
-    console.log('create player endpoint')
-})
+app.use('/api/v1', router)
 
 app.listen(process.env.PORT || 3000, () => {
     console.log('app is running on port 3000')
