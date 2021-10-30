@@ -10,10 +10,6 @@ app.use((req, res, next) => {
     next()
 });
 
-app.get('/', (req, res) => {
-    res.send({message: 'api server is up and running'})
-})
-
 app.use('/api/v1', router)
 
 app.listen(process.env.PORT || 3000, () => {

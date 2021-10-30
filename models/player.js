@@ -1,7 +1,7 @@
-'use strict';
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Player extends Model {
     /**
@@ -24,6 +24,9 @@ module.exports = (sequelize, DataTypes) => {
     avatar: DataTypes.STRING,
     height: DataTypes.STRING,
     address: DataTypes.STRING,
+    city: DataTypes.STRING,
+    street: DataTypes.STRING,
+    nationality: DataTypes.STRING,
     email: DataTypes.STRING, 
     phone: DataTypes.INTEGER,
     password: DataTypes.STRING,
