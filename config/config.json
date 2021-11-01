@@ -20,6 +20,6 @@
     "host": "ec2-52-214-178-113.eu-west-1.compute.amazonaws.com",
     "dialect": "postgres",
     "port": 5432,
-    "database_url": "postgres://rfqcqwabovniqk:7925510503247181586f0d4430d61f95afc7defcbd6112319e31bd7a68a40953@ec2-52-214-178-113.eu-west-1.compute.amazonaws.com:5432/postgresql-angular-00590"
+    "url": "postgres://rfqcqwabovniqk:7925510503247181586f0d4430d61f95afc7defcbd6112319e31bd7a68a40953@ec2-52-214-178-113.eu-west-1.compute.amazonaws.com:5432/postgresql-angular-00590"
   }
 }
