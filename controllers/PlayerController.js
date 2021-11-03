@@ -1,16 +1,43 @@
 const bcrypt = require('bcrypt')
 const Player = require('../models/').Player
+const jwt = require('jsonwebtoken')
+
+const loginPlayer = async (req, res) => {
+    let player = await Player.findOne({
+        where: {
+            email: req.body.username
+        }
+    })
+    if(player) {
+        let verifiedPassword = bcrypt.compareSync(req.body.password, player.password.trim()) // trim remove all white spaces from both sides of password
+        if(verifiedPassword){
+            jwt.sign({
+                player
+            }, 'secretkey', (error, token) => {
+                return res.status(200).json({player, token})
+            })
+        } else {
+            return res.status(400).json({
+                message: "Password is not correct"
+            })
+        }
+    } else {
+        return res.status(400).json({
+            message: "Can't find accout with this credentials"
+        })
+    }
+}
 
 const getAllPlayers = async (req, res) => {
     try {
         return await Player.findAll()
         .then((response) => {
-            res.status(200).send(response)
+            return res.status(200).json(response)
         }).catch((error) => {
-            res.status(400).send(error)
+            return res.status(400).json(error)
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         })
     }
@@ -23,12 +50,12 @@ const getPlayer = async (req, res) => {
                 id: req.params.id
             }
         }).than((response) => {
-            res.status(200).send(response)
+            return res.status(200).json(response)
         }).catch((error) => {
-            res.status(400).send(error)
+            return res.status(400).json(error)
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         })
     }
@@ -41,12 +68,12 @@ const getPlayersByLocation = async (req, res) => {
                 location: req.params.location
             }
         }).then(response => {
-            res.status(200).send(response)
+            return res.status(200).json(response)
         }).catch(error => {
-            res.status(400).send(error)
+            return res.status(400).json(error)
         }) 
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         })
     }
@@ -59,12 +86,12 @@ const getBlockedPlayers = async (req, res) => {
                 blocked: true
             }
         }).then(response => {
-            res.status(200).send(response)
+            return res.status(200).json(response)
         }).catch(error => {
-            res.status(400).send(error)
+            return res.status(400).json(error)
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         })
     }
@@ -78,12 +105,12 @@ const getBlockedPlayersByLocation = async (req, res) => {
                 blocked: true
             }   
         }).then(response => {
-            res.status(200).send(response)
+            return res.status(200).json(response)
         }).catch(error => {
-            res.status(400).send(error)
+            return res.status(400).json(error)
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         })
     }
@@ -96,12 +123,12 @@ const getVerifiedPlayers = async (req, res) => {
                 verified: true   
             }
         }).then(response => {
-            res.status(200).send(response)
+            return res.status(200).json(response)
         }).catch(error => {
-            res.status(400).send(error)
+            return res.status(400).json(error)
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         })
     }
@@ -114,12 +141,12 @@ const getUnverifiedPlayers = async (req, res) => {
                 verified: false
             }
         }).then(response => {
-            res.status(200).send(response)
+            return res.status(200).json(response)
         }).catch(error => {
-            res.status(400).send(error)
+            return res.status(400).json(error)
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         })
     }
@@ -133,12 +160,12 @@ const getVerifiedPlayersByLocation = async (req, res) => {
                 verified: true
             }
         }).then(response => {
-            res.status(200).send(response)
+            return res.status(200).json(response)
         }).catch(error => {
-            res.status(400).send(error)
+            return res.status(400).json(error)
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         })
     }
@@ -152,12 +179,12 @@ const getUnverifiedPlayersByLocation = async (req, res) => {
                 verified: false
             }
         }).then(response => {
-            res.status(200).send(response)
+            return res.status(200).json(response)
         }).catch(error => {
-            res.status(400).send(error)
+            return res.status(400).json(error)
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         }) 
     }
@@ -166,33 +193,35 @@ const getUnverifiedPlayersByLocation = async (req, res) => {
 
 const createPlayer = async (req, res) => {
     try {
-        await bcrypt.hash(req.body.password, 10, (err, hash) => {
-            return Player.create({
-                id: Math.floor(Math.random()*9000000000) + 1000000000,
-                first_name: req.body.first_name,
-                last_name: req.body.last_name,
-                birthday: req.body.birthday,
-                height: req.body.height,
-                email: req.body.email,
-                address: req.body.address,
-                city: req.body.city,
-                nationality: req.body.nationality,
-                street: req.body.street,
-                phone: req.body.phone,
-                password: hash,
-                bio: req.body.bio,
-                verified: false,
-                blocked: false,
-                age: req.body.age 
-            }).then(player => {
-                res.status(200).send(player)
-            })
-            .catch(error => {
-                res.status(400).send(error)
-            })
+        const salt = bcrypt.genSaltSync(10)
+        let hashedPassword = await bcrypt.hashSync(req.body.password, salt)
+        let generatedID = Math.floor(Math.random()*9000000000) + 1000000000
+        return await Player.create({
+            id: generatedID,
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            birthday: req.body.birthday,
+            height: req.body.height,
+            email: req.body.email,
+            address: req.body.address,
+            city: req.body.city,
+            nationality: req.body.nationality,
+            street: req.body.street,
+            phone: req.body.phone,
+            password: hashedPassword,
+            bio: req.body.bio,
+            verified: false,
+            blocked: false,
+            age: req.body.age,
+            role: 'player'
+        }).then(player => {
+            return res.status(200).json({player, token})
+        })
+        .catch(error => {
+            return res.status(400).json(error)
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         }) 
     }
@@ -217,20 +246,25 @@ const updatePlayer = async (req, res) => {
                 bio: req.body.bio,
                 verified: false,
                 blocked: false,
-                age: req.body.age
+                age: req.body.age,
+                role: 'player'
+            }, {
+                where: {
+                    id: req.body.id
+                }
             }).then(player => {
-                res.status(200).send(player)
+                return res.status(200).json(player)
             })
             .catch(error => {
-                res.status(400).send(error)
+                return res.status(400).json(error)
             })
         } else {
-            res.status(400).send({
+            return res.status(400).json({
                 message: `User with id ${req.body.id} dosn't exist in the collection`
             })
         }  
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         }) 
     }
@@ -238,20 +272,23 @@ const updatePlayer = async (req, res) => {
 
 const updatePlayerAvatar = async (req, res) => { }
 
-const deletePlayerAccount = async (req, res) => {
+const deletePlayerAccount = async (req, res) => { //TODO: find why return error message and delete row from database
     try {
+        let playerID = parseInt(req.body.id)
         return await Player.destroy({
             where: {
-                id: req.body.id
+                id: playerID
             }
         }).then(player => {
-            res.status(200).send(player)
+            return res.status(200).json(player)
         })
         .catch(error => {
-            res.status(400).send(error)
+            return res.status(400).json({
+                message: "Player ca't be deleted"
+            })
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         }) 
     }
@@ -266,19 +303,19 @@ const verifyPlayerAccount = async (req, res) => {
                 id: req.params.id
             }
         }).then(player => {
-            res.status(200).send({
+            return res.status(200).json({
                 actionStatus: "Success",
                 player
             })
         })
         .catch(error => {
-            res.status(400).send({
+            return res.status(400).json({
                 actionStatus: "Error",
                 error
             })
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         }) 
     }
@@ -293,19 +330,19 @@ const blockPlayerAccount = async (req, res) => {
                 id: req.params.id
             }
         }).then(player => {
-            res.status(200).send({
+            return res.status(200).json({
                 actionStatus: "Success",
                 player
             })
         })
         .catch(error => {
-            res.status(400).send({
+            return res.status(400).json({
                 actionStatus: "Error",
                 error
             })
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         }) 
     }
@@ -320,19 +357,19 @@ const unblockPlayerAccount = async (req, res) => {
                 id: req.params.id
             }
         }).then(player => {
-            res.status(200).send({
+            return res.status(200).json({
                 actionStatus: "Success",
                 player
             })
         })
         .catch(error => {
-            res.status(400).send({
+            return res.status(400).json({
                 actionStatus: "Error",
                 error
             })
         })
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).json({
             message: `Server error: ${error}`
         }) 
     }
@@ -343,6 +380,7 @@ const removePlayerResources = async (req, res) => {
 }
 
 module.exports = {
+    loginPlayer,
     getAllPlayers,
     getPlayer,
     getPlayersByLocation,

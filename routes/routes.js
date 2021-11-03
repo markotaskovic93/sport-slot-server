@@ -1,7 +1,9 @@
 const express = require('express')
 const router = express.Router()
+const playerAuth = require('../middleware/playerAuth.js')
 
 const {
+    loginPlayer,
     getAllPlayers,
     getPlayer,
     getPlayersByLocation,
@@ -20,8 +22,11 @@ const {
     unblockPlayerAccount
 } = require('../controllers/PlayerController.js')
 
+router.post('/players/login-player', (req, res) => {
+    loginPlayer(req, res)
+})
 
-router.get('/players/get-players', (req, res) => {
+router.get('/players/get-players', playerAuth, (req, res) => {
     getAllPlayers(req, res)
 })
 

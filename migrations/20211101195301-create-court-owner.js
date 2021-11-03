@@ -1,9 +1,11 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Players', {
+    await queryInterface.createTable('Court_owners', {
       id: {
+        allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.BIGINT
+        type: Sequelize.INTEGER
       },
       first_name: {
         allowNull: false,
@@ -13,42 +15,34 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      birthday: {
-        type: Sequelize.STRING
-      },
       avatar: {
+        allowNull: true,
         type: Sequelize.STRING
       },
-      height: {
-        type: Sequelize.STRING
+      birthday: {
+        type: Sequelize.DATE
       },
       address: {
         type: Sequelize.STRING
       },
-      city: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      street: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
       email: {
+        unique: true,
         allowNull: false,
-        type: Sequelize.STRING,
-        unique: true
-      },
-      phone: {
-        type: Sequelize.INTEGER
+        type: Sequelize.CHAR
       },
       password: {
         allowNull: false,
         type: Sequelize.CHAR
       },
-      bio: {
-        type: Sequelize.TEXT
+      phone: {
+        type: Sequelize.CHAR
+      },
+      personal_id: {
+        allowNull: false,
+        type: Sequelize.CHAR
       },
       nationality: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       verified: {
@@ -58,7 +52,6 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       role: {
-        allowNull: false,
         type: Sequelize.STRING
       },
       createdAt: {
@@ -72,6 +65,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Players');
+    await queryInterface.dropTable('Court_owners');
   }
 };

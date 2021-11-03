@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public."Players"
     nationality character varying(255) COLLATE pg_catalog."default",
     verified boolean,
     blocked boolean,
+    role character varying(255) COLLATE pg_catalog."default" NOT NULL,
     "createdAt" timestamp with time zone NOT NULL,
     "updatedAt" timestamp with time zone NOT NULL,
     CONSTRAINT "Players_pkey" PRIMARY KEY (id),
