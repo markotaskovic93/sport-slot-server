@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Court_owner.init({
+    id: {
+      primaryKey: true,
+      type: DataTypes.BIGINT
+    },
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
     avatar: DataTypes.STRING,

@@ -194,7 +194,7 @@ const getUnverifiedPlayersByLocation = async (req, res) => {
 const createPlayer = async (req, res) => {
     try {
         const salt = bcrypt.genSaltSync(10)
-        let hashedPassword = await bcrypt.hashSync(req.body.password, salt)
+        let hashedPassword = await bcrypt.hashSync(req.body.password, 10)
         let generatedID = Math.floor(Math.random()*9000000000) + 1000000000
         return await Player.create({
             id: generatedID,
