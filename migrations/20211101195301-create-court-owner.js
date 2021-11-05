@@ -23,6 +23,18 @@ module.exports = {
       address: {
         type: Sequelize.STRING
       },
+      state: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      city: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      street: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       email: {
         unique: true,
         allowNull: false,
@@ -33,6 +45,7 @@ module.exports = {
         type: Sequelize.CHAR
       },
       phone: {
+        allowNull: false,
         type: Sequelize.CHAR
       },
       personal_id: {

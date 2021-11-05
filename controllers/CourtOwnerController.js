@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt')
 const Court_owner = require('../models/').Court_owner
+const IDGenerator = require('../helpers/IDGenerator.js')
+const jwt = require('jsonwebtoken')
 
 
 const loginCourtOwner = async (req, res) => {
@@ -31,7 +33,7 @@ const loginCourtOwner = async (req, res) => {
 const createCourtOwnerAccount = async (req, res) => {
     try {
         let hashedPassword = bcrypt.hashSync(req.body.password, 8)
-        let generatedID = Math.floor(Math.random()*9000000000) + 1000000000
+        let generatedID = IDGenerator()
         return await Court_owner.create({
             id: generatedID,
             first_name: req.body.first_name,
@@ -39,6 +41,9 @@ const createCourtOwnerAccount = async (req, res) => {
             birthday: req.body.birthday,
             email: req.body.email,
             address: req.body.address,
+            state: req.body.state,
+            city: req.body.city,
+            street: req.body.street,
             phone: req.body.phone,
             personal_id: req.body.personal_id,
             password: hashedPassword,
@@ -46,10 +51,16 @@ const createCourtOwnerAccount = async (req, res) => {
             blocked: false,
             role: 'court_owner'
         }).then(courtOwner => {
-            return res.status(200).json(courtOwner)
+            return res.status(200).json({
+                actionStatus: "Success",
+                courtOwner
+            })
         })
         .catch(error => {
-            return res.status(400).json(error)
+            return res.status(400).json({
+                actionStatus: "Error",
+                error
+            })
         })
     } catch (error) {
         return res.status(500).json({
@@ -71,18 +82,24 @@ const updateCourtOwnerAccount = async (req, res) => {
                 phone: req.body.phone,
                 personal_id: req.body.personal_id,
                 password: hash,
-                verified: false,
-                blocked: false,
+                verified: req.body.verified,
+                blocked: req.body.blocked,
                 role: 'court_owner'
             }, {
                 where: {
                     id: req.body.id
                 }
             }).then(courtOwner => {
-                return res.status(200).json(courtOwner)
+                return res.status(200).json({
+                    actionStatus: "Success",
+                    courtOwner
+                })
             })
             .catch(error => {
-                return res.status(400).json(error)
+                return res.status(400).json({
+                    actionStatus: "Error",
+                    error
+                })
             })
         } else {
             return res.status(400).json({
@@ -104,11 +121,15 @@ const deleteCourtOwnerAccount = async (req, res) => {
                 id: courtOwnerID
             }
         }).than((courtOwner) => {
-            return res.status(200).json(courtOwner)
+            return res.status(200).json({
+                actionStatus: "Success",
+                courtOwner
+            })
         })
         .catch(error => {
             return res.status(400).json({
-                message: "Cant delete Court Owner account"
+                actionStatus: "Error",
+                error
             })
         })
     } catch (error) {
@@ -116,7 +137,84 @@ const deleteCourtOwnerAccount = async (req, res) => {
             message: `Server error: ${error}`
         })
     }
-    
+}
+
+const verifyCourtOwnerAccount = async (req, res) => {
+    try {   
+        return await Court_owner.update({
+            verify: true
+        }, {
+            where: {
+                id: req.params.id
+            }
+        }).than(courtOwner => {
+            return res.status(200).json({
+                actionStatus: "Success",
+                courtOwner
+            })
+        }).catch(error => {
+            return res.status(400).json({
+                actionStatus: "Error",
+                error
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: `Sever error`
+        })
+    }   
+}
+
+const blockCourtOwnerAccount = async (req, res) => {
+    try {
+        return await Court_owner.update({
+            blocked: true
+        }, {
+            where: {
+                id: req.params.id
+            }
+        }).than(courtOwner => {
+            return res.status(200).json({
+                actionStatus: "Success",
+                courtOwner
+            })
+        }).catch(error => {
+            return res.status(400).json({
+                actionStatus: "Error",
+                error
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: `Sever error`
+        })
+    }
+}
+
+const unblockCourtOwnerAccount = async (req, res) => {
+    try {
+        return await Court_owner.update({
+            blocked: false
+        }, {
+            where: {
+                id: req.body.id
+            }
+        }).than(courtOwner => {
+            return res.status(200).json({
+                actionStatus: "Success",
+                courtOwner
+            })
+        }).catch(error => {
+            return res.status(400).json({
+                actionStatus: "Error",
+                error
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: `Sever error`
+        })
+    }
 }
 
 
@@ -124,5 +222,8 @@ module.exports = {
     createCourtOwnerAccount,
     updateCourtOwnerAccount,
     deleteCourtOwnerAccount,
-    loginCourtOwner
+    loginCourtOwner,
+    verifyCourtOwnerAccount,
+    blockCourtOwnerAccount,
+    unblockCourtOwnerAccount,
 }

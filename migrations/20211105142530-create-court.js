@@ -1,29 +1,38 @@
+'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Players', {
+    await queryInterface.createTable('Courts', {
       id: {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      first_name: {
+      court_owner_id: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.BIGINT
       },
-      last_name: {
+      name: {
         allowNull: false,
-        type: Sequelize.STRING
-      },
-      birthday: {
-        type: Sequelize.STRING
-      },
-      avatar: {
-        type: Sequelize.STRING
-      },
-      height: {
         type: Sequelize.STRING
       },
       address: {
+        allowNull: false,
         type: Sequelize.STRING
+      },
+      court_enviroment: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      court_size: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      available_sports: {
+        allowNull: false,
+        type: Sequelize.ARRAY(Sequelize.STRING)
+      },
+      baners: {
+        allowNull: true,
+        type: Sequelize.ARRAY(Sequelize.STRING)
       },
       state: {
         allowNull: false,
@@ -37,33 +46,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      email: {
-        allowNull: false,
-        type: Sequelize.STRING,
-        unique: true
-      },
-      phone: {
-        type: Sequelize.INTEGER
-      },
-      password: {
-        allowNull: false,
-        type: Sequelize.CHAR
-      },
-      bio: {
-        type: Sequelize.TEXT
-      },
-      nationality: {
-        type: Sequelize.STRING
-      },
       verified: {
         type: Sequelize.BOOLEAN
       },
       blocked: {
         type: Sequelize.BOOLEAN
-      },
-      role: {
-        allowNull: false,
-        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -76,6 +63,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Players');
+    await queryInterface.dropTable('Courts');
   }
 };

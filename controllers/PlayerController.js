@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
 const Player = require('../models/').Player
+const IDGenerator = require('../helpers/IDGenerator.js')
 const jwt = require('jsonwebtoken')
 
 const loginPlayer = async (req, res) => {
@@ -194,7 +195,7 @@ const getUnverifiedPlayersByLocation = async (req, res) => {
 const createPlayer = async (req, res) => {
     try {
         let hashedPassword = await bcrypt.hashSync(req.body.password, 10)
-        let generatedID = Math.floor(Math.random()*9000000000) + 1000000000
+        let generatedID = IDGenerator()
         return await Player.create({
             id: generatedID,
             first_name: req.body.first_name,
@@ -203,8 +204,8 @@ const createPlayer = async (req, res) => {
             height: req.body.height,
             email: req.body.email,
             address: req.body.address,
+            state: req.body.state,
             city: req.body.city,
-            nationality: req.body.nationality,
             street: req.body.street,
             phone: req.body.phone,
             password: hashedPassword,
@@ -237,14 +238,14 @@ const updatePlayer = async (req, res) => {
                 height: req.body.height,
                 email: req.body.email,
                 address: req.body.address,
+                state: req.body.state,
                 city: req.body.city,
                 street: req.body.street,
-                nationality: req.body.nationality,
                 phone: req.body.phone,
                 password: hash,
                 bio: req.body.bio,
-                verified: false,
-                blocked: false,
+                verified: req.body.verified,
+                blocked: req.body.blocked,
                 age: req.body.age,
                 role: 'player'
             }, {
@@ -296,7 +297,7 @@ const deletePlayerAccount = async (req, res) => { //TODO: find why return error 
 const verifyPlayerAccount = async (req, res) => {
     try {
         return await Player.update({
-            verified: req.params.verified
+            verified: true
         }, {
             where: {
                 id: req.params.id
