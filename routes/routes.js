@@ -7,20 +7,21 @@ const {
     loginPlayer,
     getAllPlayers,
     getPlayer,
-    getPlayersByLocation,
+    getPlayersByState,
     getBlockedPlayers,
-    getBlockedPlayersByLocation,
+    getBlockedPlayersByState,
     getVerifiedPlayers,
     getUnverifiedPlayers,
-    getVerifiedPlayersByLocation,
-    getUnverifiedPlayersByLocation,
+    getVerifiedPlayersByState,
+    getUnverifiedPlayersByState,
     createPlayer,
     updatePlayer,
     updatePlayerAvatar,
     deletePlayerAccount,
     verifyPlayerAccount,
     blockPlayerAccount,
-    unblockPlayerAccount
+    unblockPlayerAccount,
+    resetPlayerPassword
 } = require('../controllers/PlayerController.js')
 
 const {
@@ -44,23 +45,24 @@ const {
 
 
 // Player Routes
-router.post('/players/login', (req, res) => loginPlayer(req, res))
-router.post('/players/create-player', (req, res) => createPlayer(req, res))
+router.post('/players/login', (req, res) => loginPlayer(req, res)) // done
+router.post('/players/create-player', (req, res) => createPlayer(req, res)) // done
+router.post('/players/reset-player-password', (req, res) => resetPlayerPassword(req, res)) // done
 router.put('/players/update-player-avatar', (req, res) => updatePlayerAvatar(req, res))
-router.put('/players/update-player', (req, res) => updatePlayer(req, res))
-router.get('/players/get-players', (req, res) => getAllPlayers(req, res))
-router.get('/players/get-player/:id', (req, res) => getPlayer(req, res))
-router.get('/players/get-players-by-location/:location', (req, res) => getPlayersByLocation(req, res))
-router.get('/players/get-blocked-players', (req, res) => getBlockedPlayers(req, res))
-router.get('/players/get-bloced-players-by-location/:location', (req, res) => getBlockedPlayersByLocation(req, res))
-router.get('/players/get-verified-players', (req, res) => getVerifiedPlayers(req, res))
-router.get('/players/get-unverified-playrs', (req, res) => getUnverifiedPlayers(req, res))
-router.get('/players/get-verified-players-by-location/:location', (req, res) => getVerifiedPlayersByLocation(req, res))
-router.get('/players/get-unverified-players-by-location/:location', (req, res) => getUnverifiedPlayersByLocation(req, res))
-router.get('/players/verify-player-account/:id', (req, res) => verifyPlayerAccount(req, res))
-router.get('/players/block-player-account/:id', (req, res) => blockPlayerAccount(req, res))
-router.get('/players/unblock-player-account/:id', (req, res) => unblockPlayerAccount(req, res))
-router.delete('/players/destroy-player-account', (req, res) => deletePlayerAccount(req, res))
+router.put('/players/update-player', (req, res) => updatePlayer(req, res)) // done
+router.get('/players/get-players', (req, res) => getAllPlayers(req, res)) // done
+router.get('/players/get-player/:id', (req, res) => getPlayer(req, res)) // done
+router.get('/players/get-players-by-state/:state', (req, res) => getPlayersByState(req, res)) // done
+router.get('/players/get-blocked-players', (req, res) => getBlockedPlayers(req, res)) // done
+router.get('/players/get-blocked-players-by-state/:state', (req, res) => getBlockedPlayersByState(req, res)) // done
+router.get('/players/get-verified-players', (req, res) => getVerifiedPlayers(req, res)) // done
+router.get('/players/get-unverified-players', (req, res) => getUnverifiedPlayers(req, res)) // done
+router.get('/players/get-verified-players-by-state/:state', (req, res) => getVerifiedPlayersByState(req, res)) // done
+router.get('/players/get-unverified-players-by-state/:state', (req, res) => getUnverifiedPlayersByState(req, res)) // done
+router.get('/players/verify-player-account/:id', (req, res) => verifyPlayerAccount(req, res)) // done
+router.get('/players/block-player-account/:id', (req, res) => blockPlayerAccount(req, res)) // done
+router.get('/players/unblock-player-account/:id', (req, res) => unblockPlayerAccount(req, res)) // done
+router.delete('/players/destroy-player-account', (req, res) => deletePlayerAccount(req, res)) // done
 // --------------------------------------- END OF Player Routes ------------------------------------------- //
 
 // Court owner routes

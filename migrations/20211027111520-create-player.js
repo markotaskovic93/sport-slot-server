@@ -43,17 +43,15 @@ module.exports = {
         unique: true
       },
       phone: {
-        type: Sequelize.INTEGER
+        allowNull: false,
+        type: Sequelize.STRING
       },
       password: {
         allowNull: false,
-        type: Sequelize.CHAR
+        type: Sequelize.STRING
       },
       bio: {
         type: Sequelize.TEXT
-      },
-      nationality: {
-        type: Sequelize.STRING
       },
       verified: {
         type: Sequelize.BOOLEAN

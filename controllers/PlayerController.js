@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const { Op } = require('sequelize')
 const Player = require('../models/').Player
 const IDGenerator = require('../helpers/IDGenerator.js')
 const jwt = require('jsonwebtoken')
@@ -46,12 +47,9 @@ const getAllPlayers = async (req, res) => {
 
 const getPlayer = async (req, res) => {
     try {
-        return await Player.find({
-            where: {
-                id: req.params.id
-            }
-        }).than((response) => {
-            return res.status(200).json(response)
+        return await Player.findByPk(req.params.id)
+        .then((player) => {
+            return res.status(200).json(player)
         }).catch((error) => {
             return res.status(400).json(error)
         })
@@ -62,14 +60,14 @@ const getPlayer = async (req, res) => {
     }
 }
 
-const getPlayersByLocation = async (req, res) => {
+const getPlayersByState = async (req, res) => {
     try {
         return await Player.findAll({
             where: {
-                location: req.params.location
+                state: req.params.state
             }
-        }).then(response => {
-            return res.status(200).json(response)
+        }).then(player => {
+            return res.status(200).json(player)
         }).catch(error => {
             return res.status(400).json(error)
         }) 
@@ -86,8 +84,8 @@ const getBlockedPlayers = async (req, res) => {
             where: {
                 blocked: true
             }
-        }).then(response => {
-            return res.status(200).json(response)
+        }).then(players => {
+            return res.status(200).json(players)
         }).catch(error => {
             return res.status(400).json(error)
         })
@@ -98,15 +96,15 @@ const getBlockedPlayers = async (req, res) => {
     }
 }
 
-const getBlockedPlayersByLocation = async (req, res) => {
+const getBlockedPlayersByState = async (req, res) => {
     try {
         return await Player.findAll({
             where: {
-                location: req.params.location,
+                state: req.params.state,
                 blocked: true
             }   
-        }).then(response => {
-            return res.status(200).json(response)
+        }).then(players => {
+            return res.status(200).json(players)
         }).catch(error => {
             return res.status(400).json(error)
         })
@@ -123,8 +121,8 @@ const getVerifiedPlayers = async (req, res) => {
             where: {
                 verified: true   
             }
-        }).then(response => {
-            return res.status(200).json(response)
+        }).then(players => {
+            return res.status(200).json(players)
         }).catch(error => {
             return res.status(400).json(error)
         })
@@ -153,15 +151,15 @@ const getUnverifiedPlayers = async (req, res) => {
     }
 }
 
-const getVerifiedPlayersByLocation = async (req, res) => {
+const getVerifiedPlayersByState = async (req, res) => {
     try {
         return await Player.findAll({
             where: {
-                location: req.params.location,
+                state: req.params.state,
                 verified: true
             }
-        }).then(response => {
-            return res.status(200).json(response)
+        }).then(players => {
+            return res.status(200).json(players)
         }).catch(error => {
             return res.status(400).json(error)
         })
@@ -172,11 +170,11 @@ const getVerifiedPlayersByLocation = async (req, res) => {
     }
 }
 
-const getUnverifiedPlayersByLocation = async (req, res) => {
+const getUnverifiedPlayersByState = async (req, res) => {
     try {
         return await Player.findAll({
             where: {
-                location: req.params.location,
+                state: req.params.state,
                 verified: false
             }
         }).then(response => {
@@ -194,7 +192,7 @@ const getUnverifiedPlayersByLocation = async (req, res) => {
 
 const createPlayer = async (req, res) => {
     try {
-        let hashedPassword = await bcrypt.hashSync(req.body.password, 10)
+        let hashedPassword = bcrypt.hashSync(req.body.password, 10)
         let generatedID = IDGenerator()
         return await Player.create({
             id: generatedID,
@@ -212,13 +210,13 @@ const createPlayer = async (req, res) => {
             bio: req.body.bio,
             verified: false,
             blocked: false,
-            age: req.body.age,
             role: 'player'
         }).then(player => {
             return res.status(200).json(player)
         })
         .catch(error => {
-            return res.status(400).json(error)
+        
+            return res.status(400).json("error 400")
         })
     } catch (error) {
         return res.status(500).json({
@@ -242,7 +240,6 @@ const updatePlayer = async (req, res) => {
                 city: req.body.city,
                 street: req.body.street,
                 phone: req.body.phone,
-                password: hash,
                 bio: req.body.bio,
                 verified: req.body.verified,
                 blocked: req.body.blocked,
@@ -303,10 +300,7 @@ const verifyPlayerAccount = async (req, res) => {
                 id: req.params.id
             }
         }).then(player => {
-            return res.status(200).json({
-                actionStatus: "Success",
-                player
-            })
+            return res.status(200).json(player)
         })
         .catch(error => {
             return res.status(400).json({
@@ -330,10 +324,7 @@ const blockPlayerAccount = async (req, res) => {
                 id: req.params.id
             }
         }).then(player => {
-            return res.status(200).json({
-                actionStatus: "Success",
-                player
-            })
+            return res.status(200).json(player)
         })
         .catch(error => {
             return res.status(400).json({
@@ -357,10 +348,7 @@ const unblockPlayerAccount = async (req, res) => {
                 id: req.params.id
             }
         }).then(player => {
-            return res.status(200).json({
-                actionStatus: "Success",
-                player
-            })
+            return res.status(200).json(player)
         })
         .catch(error => {
             return res.status(400).json({
@@ -368,6 +356,44 @@ const unblockPlayerAccount = async (req, res) => {
                 error
             })
         })
+    } catch (error) {
+        return res.status(500).json({
+            message: `Server error: ${error}`
+        }) 
+    }
+}
+
+const resetPlayerPassword = async (req, res) => {
+    try {
+        let player = await Player.findOne({
+            where: {
+                email: req.body.username
+            }
+        })
+        if(player) {
+            let hashedPassword = bcrypt.hashSync(req.body.password, 10)
+            return await Player.update({
+                password: hashedPassword
+            }, {
+                where: {
+                    email: req.body.username
+                }
+            }).then(update => {
+                return res.status(200).json({
+                    actionStatus: 'Success',
+                    update
+                })
+            }).catch(error => {
+                return res.status(400).json({
+                    actionStatus: 'Error',
+                    error
+                })
+            })
+        } else {
+            return res.status(400).json({
+                message: "Player with this email doesn't exist in collection"
+            })
+        }
     } catch (error) {
         return res.status(500).json({
             message: `Server error: ${error}`
@@ -383,18 +409,19 @@ module.exports = {
     loginPlayer,
     getAllPlayers,
     getPlayer,
-    getPlayersByLocation,
+    getPlayersByState,
     getBlockedPlayers,
-    getBlockedPlayersByLocation,
+    getBlockedPlayersByState,
     getVerifiedPlayers,
     getUnverifiedPlayers,
-    getVerifiedPlayersByLocation,
-    getUnverifiedPlayersByLocation,
+    getVerifiedPlayersByState,
+    getUnverifiedPlayersByState,
     createPlayer,
     updatePlayer,
     updatePlayerAvatar,
     deletePlayerAccount,
     verifyPlayerAccount,
     blockPlayerAccount,
-    unblockPlayerAccount
+    unblockPlayerAccount,
+    resetPlayerPassword
 }
