@@ -241,8 +241,6 @@ const updatePlayer = async (req, res) => {
                 street: req.body.street,
                 phone: req.body.phone,
                 bio: req.body.bio,
-                verified: req.body.verified,
-                blocked: req.body.blocked,
                 age: req.body.age,
                 role: 'player'
             }, {
@@ -271,10 +269,9 @@ const updatePlayerAvatar = async (req, res) => { }
 
 const deletePlayerAccount = async (req, res) => { //TODO: find why return error message and delete row from database
     try {
-        let playerID = parseInt(req.body.id)
         return await Player.destroy({
             where: {
-                id: playerID
+                id: req.body.id
             }
         }).then(player => {
             return res.status(200).json(player)

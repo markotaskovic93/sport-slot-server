@@ -29,6 +29,14 @@ const {
     updateCourtOwnerAccount,
     deleteCourtOwnerAccount,
     loginCourtOwner,
+    getBlockedCourtOwners,
+    getBlockedCourtOwnersByState,
+    getUnblockedCourtOwners,
+    getUnblockedCourtOwnersByState,
+    getVerifiedCourtOwners,
+    getVerifiedCourtOwnersByState,
+    getUnverifiedCourtOwners,
+    getUnverifiedCourtOwnersByState,
     verifyCourtOwnerAccount,
     blockCourtOwnerAccount,
     unblockCourtOwnerAccount,
@@ -66,13 +74,21 @@ router.delete('/players/destroy-player-account', (req, res) => deletePlayerAccou
 // --------------------------------------- END OF Player Routes ------------------------------------------- //
 
 // Court owner routes
-router.post('/court-owner/login', (req, res) => loginCourtOwner(req, res))
-router.post('/court-owner/create-court-owner-account', (req, res) => createCourtOwnerAccount(req, res))
-router.put('/court-owner/update-court-owner-account', (req, res) => updateCourtOwnerAccount(req, res))
-router.get('/court-owner/verify-court-owner-account/:id', (req, res) => verifyCourtOwnerAccount(req, res))
-router.get('/court-owner/block-court-owner-account/:id', (req, res) => blockCourtOwnerAccount(req, res))
-router.get('/court-owner/unblock-court-owner-account/:id', (req, res) => unblockCourtOwnerAccount(req, res))
-router.delete('/court-owner/destroy-court-owner-account', (req, res) => deleteCourtOwnerAccount(req, res))
+router.post('/court-owner/login', (req, res) => loginCourtOwner(req, res)) //
+router.post('/court-owner/create-court-owner-account', (req, res) => createCourtOwnerAccount(req, res)) // done 
+router.put('/court-owner/update-court-owner-account', (req, res) => updateCourtOwnerAccount(req, res)) //  done
+router.get('/court-owner/verify-court-owner-account/:id', (req, res) => verifyCourtOwnerAccount(req, res)) // done
+router.get('/court-owner/block-court-owner-account/:id', (req, res) => blockCourtOwnerAccount(req, res)) // done
+router.get('/court-owner/unblock-court-owner-account/:id', (req, res) => unblockCourtOwnerAccount(req, res)) // done
+router.get('/court-owner/get-blocked-court-owners', (req, res) => getBlockedCourtOwners(req, res)) // done
+router.get('/court-owner/get-blocked-court-owners-by-state/:state', (req, res) => getBlockedCourtOwnersByState(req, res)) // done
+router.get('/court-owner/get-unblocked-court-owners', (req, res) => getUnblockedCourtOwners(req, res)) // done
+router.get('/court-owner/get-unblocked-court-owners-by-state/:state', (req, res) => getUnblockedCourtOwnersByState(req, res)) // done
+router.get('/court-owner/get-verified-court-owners', (req, res) => getVerifiedCourtOwners(req, res)) // done
+router.get('/court-owner/get-verified-court-owners-by-state/:state', (req, res) => getVerifiedCourtOwnersByState(req, res)) // done
+router.get('/court-owner/get-unverified-court-owners', (req, res) => getUnverifiedCourtOwners(req, res)) // done
+router.get('/court-owner/get-unverified-court-owners-by-state/:state', (req, res) => getUnverifiedCourtOwnersByState(req, res)) // done
+router.delete('/court-owner/destroy-court-owner-account', (req, res) => deleteCourtOwnerAccount(req, res)) // done
 // -------------------------------------- End of Court Owner Routes --------------------------------------- //
 
 

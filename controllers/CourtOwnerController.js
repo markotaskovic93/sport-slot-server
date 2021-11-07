@@ -55,8 +55,7 @@ const createCourtOwnerAccount = async (req, res) => {
                 actionStatus: "Success",
                 courtOwner
             })
-        })
-        .catch(error => {
+        }).catch(error => {
             return res.status(400).json({
                 actionStatus: "Error",
                 error
@@ -73,17 +72,13 @@ const updateCourtOwnerAccount = async (req, res) => {
     try {
         const courtOwner = await Court_owner.findByPk(req.body.id)
         if(courtOwner) {
-            return await Player.update({
+            return await Court_owner.update({
                 first_name: req.body.first_name,
                 last_name: req.body.last_name,
                 birthday: req.body.birthday,
-                email: req.body.email,
                 address: req.body.address,
                 phone: req.body.phone,
                 personal_id: req.body.personal_id,
-                password: hash,
-                verified: req.body.verified,
-                blocked: req.body.blocked,
                 role: 'court_owner'
             }, {
                 where: {
@@ -115,12 +110,11 @@ const updateCourtOwnerAccount = async (req, res) => {
 
 const deleteCourtOwnerAccount = async (req, res) => {
     try {
-        let courtOwnerID = parseInt(req.body.id)
         return await Court_owner.destroy({
             where: {
-                id: courtOwnerID
+                id: req.body.id
             }
-        }).than((courtOwner) => {
+        }).then((courtOwner) => {
             return res.status(200).json({
                 actionStatus: "Success",
                 courtOwner
@@ -139,15 +133,163 @@ const deleteCourtOwnerAccount = async (req, res) => {
     }
 }
 
+const getBlockedCourtOwners = async (req, res) => {
+    try {
+        return await Court_owner.findAll({
+            where: {
+                blocked: true
+            }
+        }).then(courtOwners => {
+            return res.status(200).json(courtOwners)
+        }).catch(error => {
+            return res.status(400).json(error)
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Server error'
+        })
+    }
+}
+
+const getBlockedCourtOwnersByState = async (req, res) => {
+    try {
+        return await Court_owner.findAll({
+            where: {
+                blocked: true,
+                state: req.params.state
+            }
+        }).then(courtOwners => {
+            return res.status(200).json(courtOwners)
+        }).catch(error => {
+            return res.status(400).json(error)
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Server error'
+        })
+    }
+}
+
+const getUnblockedCourtOwners = async (req, res) => {
+    try {
+        return await Court_owner.findAll({
+            where: {
+                blocked: false
+            }
+        }).then(courtOwners => {
+            return res.status(200).json(courtOwners)
+        }).catch(error => {
+            return res.status(400).json(error)
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Server error'
+        })
+    }
+}
+
+const getUnblockedCourtOwnersByState = async (req, res) => {
+    try {
+        return await Court_owner.findAll({
+            where: {
+                blocked: false,
+                state: req.params.state
+            }
+        }).then(courtOwners => {
+            return res.status(200).json(courtOwners)
+        }).catch(error => {
+            return res.status(400).json(error)
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Server error'
+        })
+    }
+}
+
+const getVerifiedCourtOwners = async (req, res) => {
+    try {
+        return await Court_owner.findAll({
+            where: {
+                verified: true
+            }
+        }).then(courtOwners => {
+            return res.status(200).json(courtOwners)
+        }).catch(error => {
+            return res.status(400).json(error)
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Server error'
+        })
+    }
+}
+
+const getVerifiedCourtOwnersByState = async (req, res) => {
+    try {
+        return await Court_owner.findAll({
+            where: {
+                verified: true,
+                state: req.params.state
+            }
+        }).then(courtOwners => {
+            return res.status(200).json(courtOwners)
+        }).catch(error => {
+            return res.status(400).json(error)
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Server error'
+        })
+    }
+}
+
+const getUnverifiedCourtOwners = async (req, res) => {
+    try {
+        return await Court_owner.findAll({
+            where: {
+                verified: false
+            }
+        }).then(courtOwners => {
+            return res.status(200).json(courtOwners)
+        }).catch(error => {
+            return res.status(400).json(error)
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Server error'
+        })
+    }
+}
+
+const getUnverifiedCourtOwnersByState = async (req, res) => {
+    try {
+        return await Court_owner.findAll({
+            where: {
+                verified: false,
+                state: req.params.state
+            }
+        }).then(courtOwners => {
+            return res.status(200).json(courtOwners)
+        }).catch(error => {
+            return res.status(400).json(error)
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Server error'
+        })
+    }
+}
+
 const verifyCourtOwnerAccount = async (req, res) => {
     try {   
         return await Court_owner.update({
-            verify: true
+            verified: true
         }, {
             where: {
                 id: req.params.id
             }
-        }).than(courtOwner => {
+        }).then(courtOwner => {
             return res.status(200).json({
                 actionStatus: "Success",
                 courtOwner
@@ -173,7 +315,7 @@ const blockCourtOwnerAccount = async (req, res) => {
             where: {
                 id: req.params.id
             }
-        }).than(courtOwner => {
+        }).then(courtOwner => {
             return res.status(200).json({
                 actionStatus: "Success",
                 courtOwner
@@ -197,9 +339,9 @@ const unblockCourtOwnerAccount = async (req, res) => {
             blocked: false
         }, {
             where: {
-                id: req.body.id
+                id: req.params.id
             }
-        }).than(courtOwner => {
+        }).then(courtOwner => {
             return res.status(200).json({
                 actionStatus: "Success",
                 courtOwner
@@ -223,6 +365,14 @@ module.exports = {
     updateCourtOwnerAccount,
     deleteCourtOwnerAccount,
     loginCourtOwner,
+    getBlockedCourtOwners,
+    getBlockedCourtOwnersByState,
+    getUnblockedCourtOwners,
+    getUnblockedCourtOwnersByState,
+    getVerifiedCourtOwners,
+    getVerifiedCourtOwnersByState,
+    getUnverifiedCourtOwners,
+    getUnverifiedCourtOwnersByState,
     verifyCourtOwnerAccount,
     blockCourtOwnerAccount,
     unblockCourtOwnerAccount,
