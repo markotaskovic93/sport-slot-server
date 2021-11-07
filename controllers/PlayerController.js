@@ -215,7 +215,6 @@ const createPlayer = async (req, res) => {
             return res.status(200).json(player)
         })
         .catch(error => {
-        
             return res.status(400).json("error 400")
         })
     } catch (error) {
