@@ -25,10 +25,10 @@ const {
 } = require('../controllers/PlayerController.js')
 
 const {
+    loginCourtOwner,
     createCourtOwnerAccount,
     updateCourtOwnerAccount,
     deleteCourtOwnerAccount,
-    loginCourtOwner,
     getBlockedCourtOwners,
     getBlockedCourtOwnersByState,
     getUnblockedCourtOwners,
@@ -50,7 +50,6 @@ const {
     blockCourt,
     unblockCourt
 } = require('../controllers/CourtController.js')
-
 
 // Player Routes
 router.post('/players/login', (req, res) => loginPlayer(req, res)) // done
@@ -91,7 +90,6 @@ router.get('/court-owner/get-unverified-court-owners-by-state/:state', (req, res
 router.delete('/court-owner/destroy-court-owner-account', (req, res) => deleteCourtOwnerAccount(req, res)) // done
 // -------------------------------------- End of Court Owner Routes --------------------------------------- //
 
-
 // Court routes
 router.post('/court/create-court', (req, res) => createCourt(req, res))
 router.put('/court/update-court', (req, res) => updateCourt(req, res))
@@ -101,5 +99,7 @@ router.get('/court/block-court/:court_id', (req, res) => blockCourt(req, res))
 router.get('/court/unblock-court/:court_id', (req, res) => unblockCourt(req, res))
 // -------------------------------------- End of Court Routes -------------------------------------------- //
 
+// Booking court routes
+router.post('/booking/book-court/', (req, res) => bookCourt(req, res))
 
 module.exports = router
