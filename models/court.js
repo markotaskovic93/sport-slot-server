@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     state: DataTypes.STRING,
     city: DataTypes.STRING,
     street: DataTypes.STRING,
+    facilities: DataTypes.ARRAY(DataTypes.STRING),
     verified: DataTypes.BOOLEAN,
     blocked: DataTypes.BOOLEAN
   }, {

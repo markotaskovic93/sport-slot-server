@@ -16,6 +16,7 @@ const createCourt = async (req, res) => {
             state: req.body.state,
             city: req.body.city,
             street: req.body.street,
+            facilities: req.body.facilities,
             verified: false,
             blocked: false
         }).then(court => {
@@ -50,6 +51,7 @@ const updateCourt = async (req, res) => {
                 state: req.body.state,
                 city: req.body.city,
                 street: req.body.street,
+                acilities: req.body.facilities,
                 verified: req.body.verified,
                 blocked: req.body.blocked
             }, {
@@ -175,7 +177,6 @@ const unblockCourt = async (req, res) => {
         })
     }
 }
-
 
 
 

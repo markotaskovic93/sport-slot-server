@@ -46,6 +46,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      facilities: {
+        allowNull: true,
+        type: Sequelize.ARRAY(Sequelize.STRING)
+      },
       verified: {
         type: Sequelize.BOOLEAN
       },
