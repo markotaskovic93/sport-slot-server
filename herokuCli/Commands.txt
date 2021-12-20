@@ -1,0 +1,1 @@
+Command: heroku pg:psql --app sport-slot-server < Schemas.sql --> deploy tables on heroku postgres

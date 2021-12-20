@@ -1,6 +1,6 @@
-const bcrypt = require('bcrypt')
 const Court = require('../models/').Court
 const IDGenerator = require('../helpers/IDGenerator.js')
+
 
 const createCourt = async (req, res) => {
     try {
@@ -17,6 +17,7 @@ const createCourt = async (req, res) => {
             city: req.body.city,
             street: req.body.street,
             facilities: req.body.facilities,
+            court_payment_type: req.body.payment_type,
             verified: false,
             blocked: false
         }).then(court => {
@@ -43,15 +44,16 @@ const updateCourt = async (req, res) => {
         if(court) {
             return await Court.update({
                 court_owner_id: req.body.court_owner_id,
-                name: req.body.name,
-                address: req.body.address,
+                court_name: req.body.name,
+                court_address: req.body.address,
                 court_enviroment: req.body.court_enviroment,
                 court_size: req.body.court_size,
-                available_sports: req.body.available_sports,
-                state: req.body.state,
-                city: req.body.city,
-                street: req.body.street,
-                acilities: req.body.facilities,
+                court_available_sports: req.body.available_sports,
+                court_state: req.body.state,
+                court_city: req.body.city,
+                court_street: req.body.street,
+                court_facilities: req.body.facilities,
+                court_payment_type: req.body.payment_type,
                 verified: req.body.verified,
                 blocked: req.body.blocked
             }, {

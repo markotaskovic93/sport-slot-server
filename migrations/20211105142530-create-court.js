@@ -10,11 +10,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.BIGINT
       },
-      name: {
+      court_name: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      address: {
+      court_address: {
         allowNull: false,
         type: Sequelize.STRING
       },
@@ -26,29 +26,33 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      available_sports: {
+      court_available_sports: {
         allowNull: false,
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
-      baners: {
+      court_baners: {
         allowNull: true,
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
-      state: {
+      court_state: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      city: {
+      court_city: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      street: {
+      court_street: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      facilities: {
+      court_facilities: {
         allowNull: true,
         type: Sequelize.ARRAY(Sequelize.STRING)
+      },
+      court_payment_type: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       verified: {
         type: Sequelize.BOOLEAN

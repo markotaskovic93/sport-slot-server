@@ -19,20 +19,21 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BIGINT
     },
     court_owner_id: DataTypes.BIGINT,
-    name: DataTypes.STRING,
-    address: DataTypes.STRING,
+    court_name: DataTypes.STRING,
+    court_address: DataTypes.STRING,
     court_enviroment: DataTypes.STRING,
     court_size: DataTypes.STRING,
-    available_sports: {
+    court_available_sports: {
       type: DataTypes.ARRAY(DataTypes.STRING)
     },
-    baners: {
+    court_baners: {
       type: DataTypes.ARRAY(DataTypes.STRING)
     },
-    state: DataTypes.STRING,
-    city: DataTypes.STRING,
-    street: DataTypes.STRING,
-    facilities: DataTypes.ARRAY(DataTypes.STRING),
+    court_state: DataTypes.STRING,
+    court_city: DataTypes.STRING,
+    court_street: DataTypes.STRING,
+    court_facilities: DataTypes.ARRAY(DataTypes.STRING),
+    court_payment_type: DataTypes.STRING,
     verified: DataTypes.BOOLEAN,
     blocked: DataTypes.BOOLEAN
   }, {
