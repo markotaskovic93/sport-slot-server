@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Court_slots extends Model {
+  class Booked_slot extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,22 +13,20 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   };
-  Court_slots.init({
+  Booked_slot.init({
     id: {
       primaryKey: true,
       type: DataTypes.BIGINT
-    },
+    }, 
     court_id: DataTypes.BIGINT,
-    court_slot_date: DataTypes.STRING,
-    court_slot_start_time: DataTypes.STRING,
-    court_slot_end_time: DataTypes.STRING,
-    court_slot_price: DataTypes.STRING,
-    court_slot_discount: DataTypes.STRING,
-    booked: DataTypes.STRING,
-    blocked: DataTypes.BOOLEAN
+    slot_id: DataTypes.BIGINT,
+    player_id: DataTypes.BIGINT,
+    player_needed: DataTypes.STRING,
+    reservation_status: DataTypes.STRING,
+    blocked: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'Court_slots',
+    modelName: 'Booked_slot',
   });
-  return Court_slots;
+  return Booked_slot;
 };

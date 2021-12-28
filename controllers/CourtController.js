@@ -2,21 +2,23 @@ const Court = require('../models/').Court
 const IDGenerator = require('../helpers/IDGenerator.js')
 
 
+
 const createCourt = async (req, res) => {
     try {
         let courtID = IDGenerator()
         return await Court.create({
             id: courtID,
             court_owner_id: req.body.court_owner_id,
-            name: req.body.name,
-            address: req.body.address,
+            court_name: req.body.name,
+            court_address: req.body.address,
             court_enviroment: req.body.court_enviroment,
             court_size: req.body.court_size,
-            available_sports: req.body.available_sports,
-            state: req.body.state,
-            city: req.body.city,
-            street: req.body.street,
-            facilities: req.body.facilities,
+            court_available_sports: req.body.available_sports,
+            court_baners: null,
+            court_state: req.body.state,
+            court_city: req.body.city,
+            court_street: req.body.street,
+            court_facilities: req.body.facilities,
             court_payment_type: req.body.payment_type,
             verified: false,
             blocked: false
@@ -108,6 +110,32 @@ const getCourt = async (req, res) => {
     }
 }
 
+const deleteCourt = async (req, res) => {
+    try {
+        return await Court.destroy({
+            where: {
+                id: req.params.id
+            }
+        })
+        .then(court => {
+            return res.status(200).json({
+                actionStatus: "Success",
+                court
+            })
+        })
+        .catch(error => {
+            return res.state(400).json({
+                actionStatus: "Error",
+                error
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: `Server error`
+        })
+    }
+}
+
 const getCourtsByCourtOwner = async (req, res) => {
     try {
         return await Court.find({
@@ -181,10 +209,10 @@ const unblockCourt = async (req, res) => {
 }
 
 
-
 module.exports = {
     createCourt,
     updateCourt,
+    deleteCourt,
     getCourtsByCourtOwner,
     getCourt,
     blockCourt,

@@ -30,6 +30,10 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
+      booked: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       blocked: {
         allowNull: false,
         type: Sequelize.BOOLEAN

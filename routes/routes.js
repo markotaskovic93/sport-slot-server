@@ -53,12 +53,23 @@ const {
 
 const {
     createCourtSlot,
+    getCourtSlots,
     updateCourtSlot,
     blockCourtSlot,
     unblockCourtSlot,
     deleteCourtSlot,
     deleteCourtSlots
 } = require('../controllers/CourtSlotCotroller.js')
+
+const {
+    createSlotReservation,
+    getSlotReservationBySlot
+} = require('../controllers/SlotReservationController.js')
+
+const {
+    sendInviteToPlayer
+} = require('../controllers/SlotPlayersController.js')
+
 const { route } = require('express/lib/application')
 
 // Player Routes
@@ -112,9 +123,18 @@ router.get('/court/unblock-court/:court_id', (req, res) => unblockCourt(req, res
 // Court Slot routes
 router.post('/court-slot/create-slot', (req, res) => createCourtSlot(req, res)) // done
 router.put('/court-slot/update-slot', (req, res) => updateCourtSlot(req, res)) // done
+router.get('/court-slot/get-court-slots/:id', (req, res) => getCourtSlots(req, res)) // done
 router.get('/court-slot/block-slot/:id', (req, res) => blockCourtSlot(req, res)) // done
 router.get('/court-slot/unblock-slot/:id', (req, res) => unblockCourtSlot(req, res)) // done
 router.get('/court-slot/delete-slots', (req, res) => deleteCourtSlots(req, res)) // done
 router.delete('/court-slot/delete-slot', (req, res) => deleteCourtSlot(req, res)) // done
+
+// Court slot reservation
+router.post('/slot-reservation/create-slot-reservation', (req, res) => createSlotReservation(req, res)) // done
+router.get('/slot-reservation/get-slots/:id', (req, res) => getSlotReservationBySlot(req, res)) 
+
+
+// slot players
+router.post('/slot-players/invite-player', (req, res) => sendInviteToPlayer(req, res)) // 
 
 module.exports = router

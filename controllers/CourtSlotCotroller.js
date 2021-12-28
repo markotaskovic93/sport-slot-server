@@ -16,6 +16,7 @@ const createCourtSlot = async (req, res) => {
                 court_slot_end_time: courtSlotEndTime,
                 court_slot_price: courtSlotPrice,
                 court_slot_discount: courtSlotDiscount,
+                booked: false,
                 blocked: blocked,
             }).then(court => {
                 response = {
@@ -26,7 +27,6 @@ const createCourtSlot = async (req, res) => {
                     message: 'Slots added',
                 }
             })
-            console.log('iteration', i)
         }
         return res.status(200).json(response)
         //res.status(200).json(req.body.slots)
@@ -34,6 +34,29 @@ const createCourtSlot = async (req, res) => {
         return res.status(500).json({
             message: `Server error`
         })
+    }
+}
+
+const getCourtSlots = async (req, res) => {
+    try {
+        return await Court_slots.findAll({
+            where: {
+                court_id: req.params.id
+            }
+        })
+        .then(courtSlots => {
+            return res.status(200).json(courtSlots)
+        })
+        .catch(error => {
+            return res.status(400).json({
+                actionMessage: 'Error',
+                error
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: `Server error`
+        }) 
     }
 }
 
@@ -67,6 +90,68 @@ const updateCourtSlot = async (req, res) => {
         } else {
             return res.status(400).json({
                 message: `Court slot doesn't exist in collection`
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: `Server error`
+        })
+    }
+}
+
+const bookCourtSlot = async (slotID) => {
+    try {
+        const courtSlot = await Court_slots.findByPk(slotID)
+        if(courtSlot) {
+            return Court_slots.update({
+                booked: true
+            }, {
+                where: {
+                    id: slotID
+                }
+            })
+            .then(response => {
+                return res.status(200).json({
+                    actionMessage: 'Success',
+                    response
+                })
+            })
+            .catch(error => {
+                res.status(400).json({
+                    actionMessage: 'Error',
+                    error
+                })
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: `Server error`
+        })
+    }
+}
+
+const unbookCourtSlot = async (slotID) => {
+    try {
+        const courtSlot = await Court_slots.findByPk(slotID)
+        if(courtSlot) {
+            return Court_slots.update({
+                booked: false
+            }, {
+                where: {
+                    id: slotID
+                }
+            })
+            .then(response => {
+                return res.status(200).json({
+                    actionMessage: 'Success',
+                    response
+                })
+            })
+            .catch(error => {
+                res.status(400).json({
+                    actionMessage: 'Error',
+                    error
+                })
             })
         }
     } catch (error) {
@@ -195,13 +280,14 @@ const deleteCourtSlot = async (req, res) => {
     }
 }
 
-
-
 module.exports = {
     createCourtSlot,
+    getCourtSlots,
     updateCourtSlot,
     blockCourtSlot,
     unblockCourtSlot,
     deleteCourtSlots,
-    deleteCourtSlot
+    deleteCourtSlot,
+    bookCourtSlot,
+    unbookCourtSlot
 }

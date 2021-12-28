@@ -23,12 +23,8 @@ module.exports = (sequelize, DataTypes) => {
     court_address: DataTypes.STRING,
     court_enviroment: DataTypes.STRING,
     court_size: DataTypes.STRING,
-    court_available_sports: {
-      type: DataTypes.ARRAY(DataTypes.STRING)
-    },
-    court_baners: {
-      type: DataTypes.ARRAY(DataTypes.STRING)
-    },
+    court_available_sports: DataTypes.ARRAY(DataTypes.STRING),
+    court_baners: DataTypes.ARRAY(DataTypes.STRING),
     court_state: DataTypes.STRING,
     court_city: DataTypes.STRING,
     court_street: DataTypes.STRING,

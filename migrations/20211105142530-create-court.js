@@ -7,27 +7,27 @@ module.exports = {
         type: Sequelize.BIGINT
       },
       court_owner_id: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.BIGINT
       },
       court_name: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       court_address: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       court_enviroment: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       court_size: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       court_available_sports: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
       court_baners: {
@@ -35,15 +35,15 @@ module.exports = {
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
       court_state: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       court_city: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       court_street: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       court_facilities: {
@@ -51,13 +51,15 @@ module.exports = {
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
       court_payment_type: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       verified: {
+        allowNull: true,
         type: Sequelize.BOOLEAN
       },
       blocked: {
+        allowNull: true,
         type: Sequelize.BOOLEAN
       },
       createdAt: {

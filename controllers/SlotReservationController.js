@@ -1,7 +1,11 @@
 const Slot_reservation = require('../models/').Slot_reservation
 const IDGenerator = require('../helpers/IDGenerator.js')
 
-const createReservation = async (req, res) => {
+const {
+    bookSlot
+} = require('./BookedSlotController.js')
+
+const createSlotReservation = async (req, res) => {
     try {
         const { courtID, slotID, playerID, playersNeeded, status, blocked } = req.body
         const slot = await Slot_reservation.findOne({
@@ -19,6 +23,7 @@ const createReservation = async (req, res) => {
                 slot_id: slotID,
                 player_id: playerID,
                 players_needed: playersNeeded,
+                confirmed_players: 0,
                 reservation_status: status,
                 blocked: blocked
             })
@@ -46,18 +51,90 @@ const createReservation = async (req, res) => {
         })
     }
 }
-// TODO: I need to think more about what I can actually update here
-// const updateSlotReservation = async (req, res) => {
-//     try {
-//         const { slotID, courtID, playerID } = req.body
-//         const slot = await Slot_reservation.findByPk()
-//     } catch (error) {
-//         return res.status(400).json({
-//             actionStatus: "Error",
-//             error
-//         })
-//     }
-// } 
+
+const getSlotReservationBySlot = async (req, res) => {
+    try {
+        return await Slot_reservation.findAll({
+            where: {
+                slot_id: req.params.id 
+            }
+        })
+        .then(response => {
+            return res.status(400).json(response)
+        })
+        .catch(error => {
+            return res.status(400).json({
+                actionStatus: "Error",
+                error
+            })
+        })
+    } catch (error) {
+        return res.status(400).json({
+            actionStatus: "Error",
+            error
+        })
+    }
+}
+
+const updateConfirmedPlayersInSlotReservation = async (slotID) => {
+    try {
+        const slotReservation = await Slot_reservation.findByPk(slotID)
+        const currentNumOfConfirmation = slotReservation.confirmed_players
+        const playerNeeded = slotReservation.players_needed
+        if (slotReservation) {
+            if (currentNumOfConfirmation < playerNeeded) {
+                currentNumOfConfirmation += 1
+                const confirmationStatus = await updatePlayerConfirmation(slotID, currentNumOfConfirmation)
+                if(confirmationStatus && currentNumOfConfirmation === playerNeeded) {                        
+                    //TODO: send slot reservation in bookedSlot table and book reservation
+                    slotReservation.confirmed_players = currentNumOfConfirmation
+                    const bookSlot = await bookSlot(slotReservation)
+                    
+                } else {
+                    return res.status(200).json({
+                        message: "Error with updating confirmation"
+                    })
+                }
+            } else {
+                return res.status(200).json({
+                    message: "You are late, slot is already booked"
+                })
+            }
+        } else {
+            return res.status(400).json({
+                message: "Slot reservation doesn't exists"
+            })
+        }
+    } catch (error) {
+        return res.status(400).json({
+            actionStatus: "Error",
+            error
+        })
+    }
+}
+
+const updatePlayerConfirmation = async (slotID, numberOfConfirmation) => {
+    try {
+        return await Slot_reservation.update({
+            confirmed_players: numberOfConfirmation
+        }, {
+            where: {
+                id: slotID
+            }
+        })
+        .then(response => {
+            return true
+        })
+        .catch(error => {
+            return false
+        })
+    } catch (error) {
+        return res.status(400).json({
+            actionStatus: "Error",
+            error
+        })
+    }
+}
 
 const changeStatusOfSlotReservation = async (slotData) => {
     try {
@@ -123,7 +200,9 @@ const removeSlotReservation = async (req, res) => {
 }
 
 module.exports = {
-    createReservation,
+    createSlotReservation,
+    getSlotReservationBySlot,
     changeStatusOfSlotReservation,
-    removeSlotReservation
+    removeSlotReservation,
+    updateConfirmedPlayersInSlotReservation
 }
