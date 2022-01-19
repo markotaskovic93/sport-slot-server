@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     court_slot_end_time: DataTypes.STRING,
     court_slot_price: DataTypes.STRING,
     court_slot_discount: DataTypes.STRING,
-    booked: DataTypes.STRING,
+    booked: DataTypes.BOOLEAN,
     blocked: DataTypes.BOOLEAN
   }, {
     sequelize,

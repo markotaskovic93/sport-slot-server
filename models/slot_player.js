@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Slot_player.init({
-    slot_id: DataTypes.BIGINT,
+    slot_reservation_id: DataTypes.BIGINT,
     player_id: DataTypes.BIGINT,
-    invite_status: DataTypes.BOOLEAN,
+    invitation_status: DataTypes.BOOLEAN,
     invitation_responded: DataTypes.BOOLEAN,
-    slot_price: DataTypes.STRING
+    price: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Slot_player',

@@ -32,7 +32,7 @@ module.exports = {
       },
       booked: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.BOOLEAN
       },
       blocked: {
         allowNull: false,

@@ -2,207 +2,95 @@ const Slot_reservation = require('../models/').Slot_reservation
 const IDGenerator = require('../helpers/IDGenerator.js')
 
 const {
-    bookSlot
-} = require('./BookedSlotController.js')
+    checkIfCourtSlotIsBooked
+} = require('./CourtSlotCotroller.js')
+
+const {
+    invitePlayersToSlot
+} = require('./SlotPlayersController.js')
+
 
 const createSlotReservation = async (req, res) => {
     try {
-        const { courtID, slotID, playerID, playersNeeded, status, blocked } = req.body
-        const slot = await Slot_reservation.findOne({
-            where: {
-                slot_id: slotID,
-                court_id: courtID,
-                player_id: playerID
-            }
-        })
-        if(!slot) {
-            const slotReservationID = IDGenerator()
-            return await Slot_reservation.create({
-                id: slotReservationID,
-                court_id: courtID,
-                slot_id: slotID,
-                player_id: playerID,
-                players_needed: playersNeeded,
-                confirmed_players: 0,
-                reservation_status: status,
-                blocked: blocked
-            })
-            .then(response => {
-                return res.status(200).json({
-                    actionStatus: "Success",
-                    response
+        const { courtSlotID, playerID, playersNeeded, playersToInvite, pricePerPerson } = req.body
+        const slotIsBooked = await checkIfCourtSlotIsBooked(courtSlotID)
+        const isTryToBookSameSlot = await checkIfPlayerAlreadyTryToBookSameSlot(playerID, courtSlotID)
+        if(!slotIsBooked) {
+            if(!isTryToBookSameSlot) {
+                const slotReservationID = IDGenerator()
+                const slotReservation = await Slot_reservation.create({
+                    id: slotReservationID,
+                    court_slot_id: courtSlotID,
+                    admin_player_id: playerID,
+                    players_needed: playersNeeded,
+                    players_accepted: 1,
+                    reservation_status: 'open',
+                    blocked: false
+                }).then(() => {
+                    return {
+                        actionStatus: true
+                    }
+                }).catch(() => {
+                    return {
+                        actionStatus: false
+                    }
                 })
-            })
-            .catch(error => {
-                return res.status(400).json({
-                    actionStatus: "Error",
-                    error
-                })
-            })
-        } else {
-            return res.status(400).json({
-                message: "Slot is already reserved."
-            })
-        }
-    } catch (error) {
-        return res.status(400).json({
-            actionStatus: "Error",
-            error
-        })
-    }
-}
-
-const getSlotReservationBySlot = async (req, res) => {
-    try {
-        return await Slot_reservation.findAll({
-            where: {
-                slot_id: req.params.id 
-            }
-        })
-        .then(response => {
-            return res.status(400).json(response)
-        })
-        .catch(error => {
-            return res.status(400).json({
-                actionStatus: "Error",
-                error
-            })
-        })
-    } catch (error) {
-        return res.status(400).json({
-            actionStatus: "Error",
-            error
-        })
-    }
-}
-
-const updateConfirmedPlayersInSlotReservation = async (slotID) => {
-    try {
-        const slotReservation = await Slot_reservation.findByPk(slotID)
-        const currentNumOfConfirmation = slotReservation.confirmed_players
-        const playerNeeded = slotReservation.players_needed
-        if (slotReservation) {
-            if (currentNumOfConfirmation < playerNeeded) {
-                currentNumOfConfirmation += 1
-                const confirmationStatus = await updatePlayerConfirmation(slotID, currentNumOfConfirmation)
-                if(confirmationStatus && currentNumOfConfirmation === playerNeeded) {                        
-                    //TODO: send slot reservation in bookedSlot table and book reservation
-                    slotReservation.confirmed_players = currentNumOfConfirmation
-                    const bookSlot = await bookSlot(slotReservation)
-                    
+                if(slotReservation.actionStatus) {
+                    if(playersToInvite.length > 0) {
+                        const inviteActionStatus = await invitePlayersToSlot(playersToInvite, slotReservationID, pricePerPerson)
+                        if(inviteActionStatus) {
+                            return res.status(200).json({
+                                message: 'Slot is fully reserved'
+                            })
+                        } else {
+                            return res.status(400).json({
+                                message: 'Slot is reserved without players'
+                            })
+                        }
+                    }
+                    return
                 } else {
-                    return res.status(200).json({
-                        message: "Error with updating confirmation"
+                    return res.status(400).json({
+                        message: 'Error occurs when try to reserve slot'
                     })
                 }
             } else {
-                return res.status(200).json({
-                    message: "You are late, slot is already booked"
+                return res.status(400).json({
+                    message: "You already try to book this court slot"
                 })
             }
         } else {
             return res.status(400).json({
-                message: "Slot reservation doesn't exists"
+                message: "Court slot is already booked"
             })
         }
     } catch (error) {
         return res.status(400).json({
-            actionStatus: "Error",
+            message: 'Error slot reservation',
             error
         })
     }
 }
 
-const updatePlayerConfirmation = async (slotID, numberOfConfirmation) => {
+const checkIfPlayerAlreadyTryToBookSameSlot = async (playerID, slotID) => {
     try {
-        return await Slot_reservation.update({
-            confirmed_players: numberOfConfirmation
-        }, {
+        const playerTryToBookAgain = await Slot_reservation.findAll({
             where: {
-                id: slotID
+                admin_player_id: playerID,
+                court_slot_id: slotID
             }
         })
-        .then(response => {
-            return true
-        })
-        .catch(error => {
-            return false
-        })
+        return playerTryToBookAgain.length === 0 ? false : true
     } catch (error) {
         return res.status(400).json({
-            actionStatus: "Error",
+            message: 'Error',
             error
         })
     }
 }
 
-const changeStatusOfSlotReservation = async (slotData) => {
-    try {
-        const { slotID, courtID, playerID, status } = slotData
-        const slot = await Slot_reservation.findByPk(slotID)
-        if(slot) {
-            return await Slot_reservation.update({
-                reservation_status: status
-            }, {
-                where: {
-                    slot_id: slotID,
-                    court_id: courtID,
-                    player_id: playerID
-                }
-            })
-            .then(response => {
-                return res.status(200).json({
-                    actionMessage: "Status is updated.",
-                    response
-                })
-            })
-        } else {
-            return res.status(400).json({
-                actionMessage: "Slot doesn't exist in collection"
-            })
-        }
-    } catch (error) {
-        return res.status(400).json({
-            actionStatus: "Error",
-            error
-        })
-    }
-}
 
-const removeSlotReservation = async (req, res) => {
-    try {
-        const { slotID, courtID, playerID } = req.body
-        return await Slot_reservation.destroy({
-            where: {
-                slot_id: slotID,
-                court_id: courtID,
-                player_id: playerID
-            }
-        })
-        .then(response => {
-            return res.status(200).json({
-                actionMessage: "Slot is successfully removed from collection",
-                response
-            })
-        })
-        .catch(error => {
-            return res.status(400).json({
-                actionMessage: "Error",
-                error
-            })
-        })
-    } catch (error) {
-        return res.status(400).json({
-            actionStatus: "Error",
-            error
-        })
-    }
-}
 
 module.exports = {
-    createSlotReservation,
-    getSlotReservationBySlot,
-    changeStatusOfSlotReservation,
-    removeSlotReservation,
-    updateConfirmedPlayersInSlotReservation
+    createSlotReservation
 }

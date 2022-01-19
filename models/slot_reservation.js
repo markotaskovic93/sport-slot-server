@@ -16,11 +16,11 @@ module.exports = (sequelize, DataTypes) => {
     id: {
       primaryKey: true,
       type: DataTypes.BIGINT
-    }, 
-    court_id: DataTypes.BIGINT,
-    slot_id: DataTypes.BIGINT,
-    player_id: DataTypes.BIGINT,
+    },
+    court_slot_id: DataTypes.BIGINT,
+    admin_player_id: DataTypes.BIGINT,
     players_needed: DataTypes.STRING,
+    players_accepted: DataTypes.STRING,
     reservation_status: DataTypes.STRING,
     blocked: DataTypes.STRING
   }, {

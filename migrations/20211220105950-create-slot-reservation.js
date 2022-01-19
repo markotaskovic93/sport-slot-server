@@ -5,19 +5,19 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      court_id: {
+      court_slot_id: {
         allowNull: false,
         type: Sequelize.BIGINT
       },
-      slot_id: {
-        allowNull: false,
-        type: Sequelize.BIGINT
-      },
-      player_id: {
+      admin_player_id: {
         allowNull: false,
         type: Sequelize.BIGINT
       },
       players_needed: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      players_accepted: {
         allowNull: false,
         type: Sequelize.STRING
       },

@@ -1,7 +1,13 @@
 const express = require('express')
 const router = express.Router()
+const { validate } = require('express-validation')
+
+
 //const playerAuth = require('../middleware/playerAuth.js')
 //const courtOwnerAuth = require('../middleware/courtOwnerAuth.js')
+const {
+    createPlayerValidation
+} = require('../middleware/playerValidations.js')
 
 const {
     loginPlayer,
@@ -62,35 +68,32 @@ const {
 } = require('../controllers/CourtSlotCotroller.js')
 
 const {
-    createSlotReservation,
-    getSlotReservationBySlot
+    createSlotReservation
 } = require('../controllers/SlotReservationController.js')
 
 const {
-    sendInviteToPlayer
+    respondToInvitation
 } = require('../controllers/SlotPlayersController.js')
-
-const { route } = require('express/lib/application')
 
 // Player Routes
 router.post('/players/login', (req, res) => loginPlayer(req, res)) // done
-router.post('/players/create-player', (req, res) => createPlayer(req, res)) // done
-router.post('/players/reset-player-password', (req, res) => resetPlayerPassword(req, res)) // done
-router.put('/players/update-player-avatar', (req, res) => updatePlayerAvatar(req, res))
-router.put('/players/update-player', (req, res) => updatePlayer(req, res)) // done
-router.get('/players/get-players', (req, res) => getAllPlayers(req, res)) // done
-router.get('/players/get-player/:id', (req, res) => getPlayer(req, res)) // done
-router.get('/players/get-players-by-state/:state', (req, res) => getPlayersByState(req, res)) // done
-router.get('/players/get-blocked-players', (req, res) => getBlockedPlayers(req, res)) // done
-router.get('/players/get-blocked-players-by-state/:state', (req, res) => getBlockedPlayersByState(req, res)) // done
-router.get('/players/get-verified-players', (req, res) => getVerifiedPlayers(req, res)) // done
-router.get('/players/get-unverified-players', (req, res) => getUnverifiedPlayers(req, res)) // done
-router.get('/players/get-verified-players-by-state/:state', (req, res) => getVerifiedPlayersByState(req, res)) // done
-router.get('/players/get-unverified-players-by-state/:state', (req, res) => getUnverifiedPlayersByState(req, res)) // done
-router.get('/players/verify-player-account/:id', (req, res) => verifyPlayerAccount(req, res)) // done
-router.get('/players/block-player-account/:id', (req, res) => blockPlayerAccount(req, res)) // done
-router.get('/players/unblock-player-account/:id', (req, res) => unblockPlayerAccount(req, res)) // done
-router.delete('/players/destroy-player-account', (req, res) => deletePlayerAccount(req, res)) // done
+router.post('/player/create-player', [validate(createPlayerValidation)], (req, res) => createPlayer(req, res)) // done
+router.post('/player/reset-player-password', (req, res) => resetPlayerPassword(req, res)) // done
+router.put('/player/update-player-avatar', (req, res) => updatePlayerAvatar(req, res))
+router.put('/player/update-player', (req, res) => updatePlayer(req, res)) // done
+router.get('/player/get-players', (req, res) => getAllPlayers(req, res)) // done
+router.get('/player/get-player/:id', (req, res) => getPlayer(req, res)) // done
+router.get('/player/get-players-by-state/:state', (req, res) => getPlayersByState(req, res)) // done
+router.get('/player/get-blocked-players', (req, res) => getBlockedPlayers(req, res)) // done
+router.get('/player/get-blocked-players-by-state/:state', (req, res) => getBlockedPlayersByState(req, res)) // done
+router.get('/player/get-verified-players', (req, res) => getVerifiedPlayers(req, res)) // done
+router.get('/player/get-unverified-players', (req, res) => getUnverifiedPlayers(req, res)) // done
+router.get('/player/get-verified-players-by-state/:state', (req, res) => getVerifiedPlayersByState(req, res)) // done
+router.get('/player/get-unverified-players-by-state/:state', (req, res) => getUnverifiedPlayersByState(req, res)) // done
+router.get('/player/verify-player-account/:id', (req, res) => verifyPlayerAccount(req, res)) // done
+router.get('/player/block-player-account/:id', (req, res) => blockPlayerAccount(req, res)) // done
+router.get('/player/unblock-player-account/:id', (req, res) => unblockPlayerAccount(req, res)) // done
+router.delete('/player/destroy-player-account', (req, res) => deletePlayerAccount(req, res)) // done
 // --------------------------------------- END OF Player Routes ------------------------------------------- //
 
 // Court owner routes
@@ -131,10 +134,8 @@ router.delete('/court-slot/delete-slot', (req, res) => deleteCourtSlot(req, res)
 
 // Court slot reservation
 router.post('/slot-reservation/create-slot-reservation', (req, res) => createSlotReservation(req, res)) // done
-router.get('/slot-reservation/get-slots/:id', (req, res) => getSlotReservationBySlot(req, res)) 
 
-
-// slot players
-router.post('/slot-players/invite-player', (req, res) => sendInviteToPlayer(req, res)) // 
+// Slot players
+router.post('/slot-players/respond-to-invitation', (req, res) => respondToInvitation(req, res))
 
 module.exports = router

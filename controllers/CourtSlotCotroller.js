@@ -6,17 +6,17 @@ const createCourtSlot = async (req, res) => {
     try {
         let response = {}
         for(let i = 0; i < req.body.slots.length; i++) {
-            const { courtID, courtSlotDate, courtSlotStartTime, courtSlotEndTime, courtSlotPrice, courtSlotDiscount, blocked } = req.body.slots[i]
+            const { court_id, court_slot_date, court_slot_start_time, court_slot_end_time, court_slot_price, court_slot_discount, booked, blocked } = req.body.slots[i]
             let courtSlotID = IDGenerator()
             await Court_slots.create({
                 id: courtSlotID,
-                court_id: courtID,
-                court_slot_date: courtSlotDate,
-                court_slot_start_time: courtSlotStartTime,
-                court_slot_end_time: courtSlotEndTime,
-                court_slot_price: courtSlotPrice,
-                court_slot_discount: courtSlotDiscount,
-                booked: false,
+                court_id: court_id,
+                court_slot_date: court_slot_date,
+                court_slot_start_time: court_slot_start_time,
+                court_slot_end_time: court_slot_end_time,
+                court_slot_price: court_slot_price,
+                court_slot_discount: court_slot_discount,
+                booked: booked,
                 blocked: blocked,
             }).then(court => {
                 response = {
@@ -24,12 +24,11 @@ const createCourtSlot = async (req, res) => {
                 }
             }).catch(error => {
                 response = {
-                    message: 'Slots added',
+                    message: 'Slots not added',
                 }
             })
         }
         return res.status(200).json(response)
-        //res.status(200).json(req.body.slots)
     } catch (error) {
         return res.status(500).json({
             message: `Server error`
@@ -251,6 +250,24 @@ const deleteCourtSlots = async (req, res) => {
     }
 }
 
+const checkIfCourtSlotIsBooked = async (slotID) => {
+    try {
+        const courtSlot = await Court_slots.findAll({
+            where: {
+                id: slotID
+            },
+            raw: true,
+            attributes: ['booked'], 
+        })
+        return courtSlot[0].booked
+    } catch (error) {
+        return res.status(400).json({
+            message: 'Error',
+            error
+        })
+    }
+}
+
 const deleteCourtSlot = async (req, res) => {
     try {
         const courtSlot = await Court_slots.findByPk(req.body.id)
@@ -289,5 +306,6 @@ module.exports = {
     deleteCourtSlots,
     deleteCourtSlot,
     bookCourtSlot,
-    unbookCourtSlot
+    unbookCourtSlot,
+    checkIfCourtSlotIsBooked
 }

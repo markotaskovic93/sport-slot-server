@@ -5,19 +5,21 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      slot_id: {
+      slot_reservation_id: {
+        allowNull: false,
         type: Sequelize.BIGINT
       },
       player_id: {
+        allowNull: false,
         type: Sequelize.BIGINT
       },
-      invite_status: {
+      invitation_status: {
         type: Sequelize.BOOLEAN
       },
       invitation_responded: {
         type: Sequelize.BOOLEAN
       },
-      slot_price: {
+      price: {
         type: Sequelize.STRING
       },
       createdAt: {
