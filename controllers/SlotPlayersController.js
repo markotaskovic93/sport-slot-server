@@ -77,15 +77,33 @@ const respondToInvitation = async (req, res) => {
     }
 }
 
-// const getPlayersBySlot = async (req, res) => {
-//     try {
-        
-//     } catch (error) {
-        
-//     }
-// }
+const getPlayersBySlotReservation = async (req, res) => {
+    try {
+        const { slotReservationID } = req.params
+        return await Slot_player.findAll({
+            where: {
+                slot_reservation_id: slotReservationID
+            }
+        })
+        .then(resp => {
+            return res.status(200).json(resp)
+        })
+        .catch(error => {
+            return res.status(400).json({
+                message: "Can't find players for this slot",
+                error
+            })
+        })
+    } catch (error) {
+        return res.status(400).json({
+            message: 'Error',
+            error
+        })
+    }
+}
 
 module.exports = {
     invitePlayersToSlot,
-    respondToInvitation
+    respondToInvitation,
+    getPlayersBySlotReservation
 }
