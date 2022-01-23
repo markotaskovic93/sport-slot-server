@@ -89,8 +89,28 @@ const checkIfPlayerAlreadyTryToBookSameSlot = async (playerID, slotID) => {
     }
 }
 
+const getSlotReservationsBySlot = async (slotID) => {
+    try {
+        const slotReservations = await Slot_reservation.count({
+            where: {
+                court_slot_id: slotID
+            }
+        })
+        .then(resp => {
+            return resp
+        })
+        .catch(er => { 
+            return false
+        })
+        return slotReservations
+    } catch (error) {
+        return false
+    }
+}
+
 
 
 module.exports = {
-    createSlotReservation
+    createSlotReservation,
+    getSlotReservationsBySlot
 }

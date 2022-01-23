@@ -1,6 +1,5 @@
 const express = require('express')
 const app = express()
-const { ValidationError } = require('express-validation')
 const router = require('./routes/routes.js') 
 
 app.use(express.json())
@@ -12,10 +11,14 @@ app.use((req, res, next) => {
 });
 app.use('/api/v1', router)
 app.use((err, req, res, next) => {
-    if (err instanceof ValidationError) {
-      return res.status(err.statusCode).json(err)
-    } 
-    return res.status(500).json(err)
-})
+  if (err && err.error && err.error.isJoi) {
+    res.status(400).json({
+      type: err.type,
+      message: err.error.toString()
+    });
+  } else {
+    next(err);
+  }
+});
 app.listen(process.env.PORT || 3000, () => console.log('app is running on port 3000'))
 

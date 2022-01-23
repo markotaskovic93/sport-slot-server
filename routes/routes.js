@@ -1,13 +1,19 @@
 const express = require('express')
 const router = express.Router()
-const { validate } = require('express-validation')
+const validator = require('express-joi-validation').createValidator({
+    passError: true
+});
 
+//const playerAuth = require('../middleware/auth/playerAuth.js')
+//const courtOwnerAuth = require('../middleware/auth/courtOwnerAuth.js')
 
-//const playerAuth = require('../middleware/playerAuth.js')
-//const courtOwnerAuth = require('../middleware/courtOwnerAuth.js')
 const {
     createPlayerValidation
-} = require('../middleware/playerValidations.js')
+} = require('../middleware/validation/playerValidations.js')
+
+const {
+    searchValidation
+} = require('../middleware/validation/searchValidations.js')
 
 const {
     loginPlayer,
@@ -54,7 +60,8 @@ const {
     getCourtsByCourtOwner,
     getCourt,
     blockCourt,
-    unblockCourt
+    unblockCourt,
+    searchCourt
 } = require('../controllers/CourtController.js')
 
 const {
@@ -77,7 +84,7 @@ const {
 
 // Player Routes
 router.post('/players/login', (req, res) => loginPlayer(req, res)) // done
-router.post('/player/create-player', [validate(createPlayerValidation)], (req, res) => createPlayer(req, res)) // done
+router.post('/player/create-player', [validator.query(createPlayerValidation)], (req, res) => createPlayer(req, res)) // done
 router.post('/player/reset-player-password', (req, res) => resetPlayerPassword(req, res)) // done
 router.put('/player/update-player-avatar', (req, res) => updatePlayerAvatar(req, res))
 router.put('/player/update-player', (req, res) => updatePlayer(req, res)) // done
@@ -121,6 +128,7 @@ router.get('/court/get-courts-by-owner/:court_owner_id', (req, res) => getCourts
 router.get('/court/get-court/:court_id/:court_owner_id', (req, res) => getCourt(req, res))
 router.get('/court/block-court/:court_id', (req, res) => blockCourt(req, res))
 router.get('/court/unblock-court/:court_id', (req, res) => unblockCourt(req, res))
+router.get('/court/search-courts/:sport/:date/:start_time/:location/:court_enviroment/:payment_type', [validator.query(searchValidation)], (req, res) => searchCourt(req, res))
 // -------------------------------------- End of Court Routes -------------------------------------------- //
 
 // Court Slot routes

@@ -1,7 +1,14 @@
 const Court = require('../models/').Court
 const IDGenerator = require('../helpers/IDGenerator.js')
+const { Op } = require('sequelize')
 
+const {
+    checkIfSlotIsAvailable
+} = require('./CourtSlotCotroller.js')
 
+const {
+    getSlotReservationsBySlot
+} = require('./SlotReservationController.js')
 
 const createCourt = async (req, res) => {
     try {
@@ -20,7 +27,7 @@ const createCourt = async (req, res) => {
             court_street: req.body.street,
             court_facilities: req.body.facilities,
             court_payment_type: req.body.payment_type,
-            verified: false,
+            verified: true,
             blocked: false
         }).then(court => {
             return res.status(200).json({
@@ -208,6 +215,63 @@ const unblockCourt = async (req, res) => {
     }
 }
 
+const searchCourt = async (req, res) => { 
+    try {
+        const courts = await getCourtFromSearch(req.params)
+        let availableCourts = []
+        if(courts.length > 0) {
+            for(let i = 0; i < courts.length; i++) {
+                req.params.court_id = courts[i].id
+                let courtSlot = await checkIfSlotIsAvailable(req.params)
+                let slotReservations = await getSlotReservationsBySlot(courtSlot.id)
+                courts[i].slot = courtSlot
+                courts[i].reservations = slotReservations
+                if(courtSlot) {
+                    availableCourts.push(courts[i])
+                }
+            }
+            return res.status(200).json(availableCourts)
+        } else {
+            res.status(200).json([])
+        }
+    } catch (error) {
+        return res.status(400).json({
+            message: 'Error',
+            error
+        })
+    }
+}
+
+const getCourtFromSearch = async (courtParams) => {
+    try {
+        const { sport, location, court_enviroment, payment_type, offset, limit } = courtParams
+        const courts = await Court.findAll({
+            where: {
+                court_available_sports: { 
+                    [Op.contains]: [sport]
+                },
+                court_payment_type: payment_type,
+                court_address: location,
+                court_enviroment: court_enviroment,
+                verified: true,
+                blocked: false
+            },
+            raw: true,
+            attributes: ['id', 'court_name', 'court_address', 'court_size', 'court_enviroment'],
+            offset: offset, 
+            limit: limit
+        })
+        .then(resp => {
+            return resp
+        })
+        .catch(() => {
+            return false
+        })
+        return courts
+    } catch (error) {
+        return false
+    }
+}
 
 module.exports = {
     createCourt,
@@ -216,5 +280,6 @@ module.exports = {
     getCourtsByCourtOwner,
     getCourt,
     blockCourt,
-    unblockCourt
+    unblockCourt,
+    searchCourt
 }

@@ -297,6 +297,31 @@ const deleteCourtSlot = async (req, res) => {
     }
 }
 
+const checkIfSlotIsAvailable = async (slotData) => {
+    try {
+        const { date, start_time, court_id } = slotData
+        return await Court_slots.findOne({
+            where: {
+                court_id: court_id,
+                court_slot_date: date,
+                court_slot_start_time: start_time,
+                booked: false,
+                blocked: false
+            },
+            raw: true,
+            attributes: ['id', 'court_slot_date', 'court_slot_start_time', 'court_slot_end_time', 'court_slot_price', 'court_slot_discount']
+        })
+        .then((resp) => {
+            return resp
+        })
+        .catch(() => {
+            return false
+        })
+    } catch (error) {
+        return false
+    }
+}
+
 module.exports = {
     createCourtSlot,
     getCourtSlots,
@@ -307,5 +332,6 @@ module.exports = {
     deleteCourtSlot,
     bookCourtSlot,
     unbookCourtSlot,
-    checkIfCourtSlotIsBooked
+    checkIfCourtSlotIsBooked,
+    checkIfSlotIsAvailable
 }

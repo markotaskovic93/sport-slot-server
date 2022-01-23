@@ -1,6 +1,6 @@
-const { Joi } = require('express-validation')
+const Joi = require('joi')
 
-const createPlayerValidation = {
+const createPlayerValidation = Joi.object({
     body: Joi.object({
         first_name: Joi.string().required(),
         last_name: Joi.string().required(),
@@ -18,8 +18,8 @@ const createPlayerValidation = {
         blocked: Joi.boolean(),
         role: 'player',
     })
-}
+})
 
-module.exports = {
-    createPlayerValidation
+module.exports = { 
+    createPlayerValidation 
 }
