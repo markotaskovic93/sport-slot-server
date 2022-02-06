@@ -17,6 +17,7 @@ const createCourt = async (req, res) => {
             id: courtID,
             court_owner_id: req.body.court_owner_id,
             court_name: req.body.name,
+            court_description: req.body.description,
             court_address: req.body.address,
             court_enviroment: req.body.court_enviroment,
             court_size: req.body.court_size,
@@ -54,6 +55,7 @@ const updateCourt = async (req, res) => {
             return await Court.update({
                 court_owner_id: req.body.court_owner_id,
                 court_name: req.body.name,
+                court_description: req.body.description,
                 court_address: req.body.address,
                 court_enviroment: req.body.court_enviroment,
                 court_size: req.body.court_size,
@@ -119,14 +121,15 @@ const getCourt = async (req, res) => {
 
 const deleteCourt = async (req, res) => {
     try {
+        const { id } = req.body
         return await Court.destroy({
             where: {
-                id: req.params.id
+                id: id
             }
         })
         .then(court => {
             return res.status(200).json({
-                actionStatus: "Success",
+                actionStatus: "Court deleted",
                 court
             })
         })
@@ -251,7 +254,7 @@ const getCourtFromSearch = async (courtParams) => {
                     [Op.contains]: [sport]
                 },
                 court_payment_type: payment_type,
-                court_address: location,
+                court_address: location, //TODO: this will be changed to serach by state, city for the first time
                 court_enviroment: court_enviroment,
                 verified: true,
                 blocked: false

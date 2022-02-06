@@ -14,6 +14,10 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
+      court_description: {
+        allowNull: true,
+        type: Sequelize.TEXT
+      },
       court_address: {
         allowNull: true,
         type: Sequelize.STRING

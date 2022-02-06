@@ -31,7 +31,7 @@ const invitePlayersToSlot = async (players, slotReservationID, slotPricePerPerso
 const respondToInvitation = async (req, res) => {
     try {
         const { invitationResponse, slotReservationID, playerID } = req.body
-        const availablePlayerSlots = await Slot_reservation.findAll({
+        const availableNumberOfSlots = await Slot_reservation.findAll({
             where: {
                 id: slotReservationID 
             },
@@ -44,7 +44,7 @@ const respondToInvitation = async (req, res) => {
         .catch(error => {
             console.log(error)
         })
-        if (availablePlayerSlots > 0) {
+        if (availableNumberOfSlots > 0) {
             return await Slot_player.update({
                 invitation_status: invitationResponse,
                 invitation_responded: true
@@ -55,6 +55,13 @@ const respondToInvitation = async (req, res) => {
                 }
             })
             .then(resp => {
+
+                // ovde treba da implementiram da kad je players_needed i players_accepted jednako onda da se rezervise slot rezervacija i termin da se bukira
+
+                if(availableNumberOfSlots - 1 === 0) {
+                    //TODO
+                }
+
                 return res.status(200).json({
                     message: 'success'
                 })

@@ -1,0 +1,18 @@
+1. Videti kako resiti problem sa cenom na pocetnoj stranici, da li ce se ta cena definisati po coveku ili ce biti za ceo termin.
+2. Kada se termin zavrsi prebaciti ga u tabelu slots history gde ce se nalaziti svi termini koji su bili i definisati koji su rokovi cuvanja tih podataka
+3. Rebook opcija, termin slota koji je odigran zajedno sa igracima treba da ima opciju da bukira za naredni period u isto vreme na istom terenu.
+   Morali bi da potvrde svi igraci jer to znaci da se taj slot bukira za isti termin u svim narednim danima za taj teren i odlaze u slot rezervaciju. 
+   Kako ce ici placanje u ovom slucaju, da li ce se ta rezervacija naplatiti odmah ili ce to cekati da dodje trenutak ?
+4. Kreirati rejting terena, svaki igrac koji je igrao na tom terenu moze samo jednom da rejtuje taj teren i da ostavi komentar. 
+5. Doraditi deo kada se teren deli na 2 dela i onda u istom terminu ima 2 slota u istom terenu. Kako napraviti razliku izmedju jedne i druge strane terena ?
+6. Napraviti resource manager za slike igraca, terena i slajdera za teren. Treba da ima resize asseta, kompresija asseta i prebacivanje asseta na odredjenu lokaciju. 
+7. Videti kako da se cuvaju pinovi (ltd, lng) za mapu u vezi adrese terena. Kako ce se kreirati addresa, da li kao jedinstvena stvar, ili ce se razbijati na grad, naselje, ulica, broj, drzava ?
+8. Srediti pretrazivanje po bazi kada je uppercase ili lowercase.
+9. Dodati court_description u bazi podataka, migraciji i modelu.
+10. Resiti deo kada neki igrac ili igraci otkazu ucestvovanje nakon sto se slot bukiran i pre nego sto je slot bukiran.
+11. Inicijalno ucitavanje terena na pocetnoj stranici
+
+
+
+===================== TESTIRANJE ZA TERENE ODMAH UJUTRU PA NAKON TOGA PRELAZAK NA RESAVANJE OVIH STVARI ==============================
+

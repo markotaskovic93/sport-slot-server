@@ -59,6 +59,23 @@ const getCourtSlots = async (req, res) => {
     }
 }
 
+const checkIfCourtSlotExist = async (slotID) => {
+    try {
+        let exist = false
+        const courtExist = await Court_slots.findByPk(slotID)
+        if(courtExist) {
+            exist = true            
+        } else {
+            exist = false
+        }
+        return exist
+    } catch (error) {
+        return res.status(500).json({
+            message: `Server error`
+        }) 
+    }
+}
+
 const updateCourtSlot = async (req, res) => {
     try {
         const { slotID, courtID, courtSlotDate, courtSlotStartTime, courtSlotEndTime, courtSlotPrice, courtSlotDiscount } = req.body
@@ -333,5 +350,6 @@ module.exports = {
     bookCourtSlot,
     unbookCourtSlot,
     checkIfCourtSlotIsBooked,
-    checkIfSlotIsAvailable
+    checkIfSlotIsAvailable,
+    checkIfCourtSlotExist
 }

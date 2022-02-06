@@ -1,74 +1,48 @@
+'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Players', {
+    await queryInterface.createTable('Player_payment_methods', {
       id: {
+        allowNull: false,
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      full_name: {
+      player_id: {
+        allowNull: false,
+        type: Sequelize.BIGINT
+      },
+      first_name: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      birthday: {
+      last_name: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      height: {
+      card_number: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        unique: true
+      },
+      expiration_month: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      expiration_year: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      cvv: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      zip_code: {
         allowNull: false,
         type: Sequelize.STRING
       },
       state: {
         allowNull: false,
         type: Sequelize.STRING
-      },
-      city: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      street: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      gender: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      age: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      email: {
-        allowNull: false,
-        type: Sequelize.STRING,
-        unique: true
-      },
-      phone: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      password: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      bio: {
-        allowNull: true,
-        type: Sequelize.TEXT
-      },
-      sport: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      email_verified: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN
-      },
-      phone_verified: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN
-      },
-      terms_conditions: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN
       },
       blocked: {
         allowNull: false,
@@ -85,6 +59,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Players');
+    await queryInterface.dropTable('Player_payment_methods');
   }
 };

@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     court_owner_id: DataTypes.BIGINT,
     court_name: DataTypes.STRING,
+    court_description: DataTypes.TEXT,
     court_address: DataTypes.STRING,
     court_enviroment: DataTypes.STRING,
     court_size: DataTypes.STRING,
