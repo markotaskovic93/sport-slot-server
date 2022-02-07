@@ -1,74 +1,47 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Players', {
+    await queryInterface.createTable('Court_owner_payment_methods', {
       id: {
+        allowNull: false,
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      full_name: {
+      court_owner_id: {
+        allowNull: false,
+        type: Sequelize.BIGINT
+      },
+      first_name: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      birthday: {
+      last_name: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      height: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      state: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      city: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      street: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      gender: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      age: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      email: {
+      card_number: {
         allowNull: false,
         type: Sequelize.STRING,
         unique: true
       },
-      phone: {
+      expiration_month: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      password: {
+      expiration_year: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      bio: {
-        allowNull: true,
-        type: Sequelize.TEXT
-      },
-      sport: {
+      cvv: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      email_verified: {
+      zip_code: {
         allowNull: false,
-        type: Sequelize.BOOLEAN
+        type: Sequelize.STRING
       },
-      phone_verified: {
+      state: {
         allowNull: false,
-        type: Sequelize.BOOLEAN
-      },
-      terms_conditions: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN
+        type: Sequelize.STRING
       },
       blocked: {
         allowNull: false,
@@ -85,6 +58,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Players');
+    await queryInterface.dropTable('Court_owner_payment_methods');
   }
 };

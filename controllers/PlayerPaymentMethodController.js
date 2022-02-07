@@ -1,15 +1,11 @@
-const Player_payment_method = require('../models/').Player_payment_method
+const Player_payment_method = require('../models').Player_payment_method
 
-class PlayerPaymentController {
+class PlayerPaymentMethodController {
 
     static async createPlayerPaymentMethod(req, res) {
         try {
             const response = await Player_payment_method.createPaymentMethod(req.body)
-            if(response.actionStatus) {
-                return res.status(response.status).json(response)
-            } else {
-                return res.status(response.status).json(response)
-            }
+            return res.status(response.status).json(response)
         } catch (error) {
             return {
                 actionStatus: false,
@@ -23,11 +19,7 @@ class PlayerPaymentController {
     static async updatePlayerPaymentMethod(req, res) {
         try {
             const response = await Player_payment_method.updatePaymentMethod(req.body)
-            if(response.actionStatus) {
-                return res.status(response.status).json(response)
-            } else {
-                return res.status(response.status).json(response)
-            }
+            return res.status(response.status).json(response)
         } catch (error) {
             return {
                 actionStatus: false,
@@ -41,11 +33,7 @@ class PlayerPaymentController {
     static async deletePlayerPaymentMethod(req, res) {
         try {
             const response = await Player_payment_method.deletePaymentMethod(req.params)
-            if(response.actionStatus) {
-                return res.status(response.status).json(response)
-            } else {
-                return res.status(response.status).json(response)
-            }
+            return res.status(response.status).json(response)
         } catch (error) {
             return {
                 actionStatus: false,
@@ -59,11 +47,7 @@ class PlayerPaymentController {
     static async getPaymentMethodDetails(req, res) {
         try {
             const response = await Player_payment_method.getPaymentMethod(req.params)
-            if(response.actionStatus) {
-                return res.status(response.status).json(response)
-            } else {
-                return res.status(response.status).json(response)
-            }
+            return res.status(response.status).json(response)
         } catch (error) {
             return {
                 actionStatus: false,
@@ -77,11 +61,7 @@ class PlayerPaymentController {
     static async getPlayerPaymentMethods(req, res) {
         try {
             const response = await Player_payment_method.getAllPlayerPaymentMethods(req.params)
-            if(response.actionStatus) {
-                return res.status(response.status).json(response)
-            } else {
-                return res.status(response.status).json(response)
-            }
+            return res.status(response.status).json(response)
         } catch (error) {
             return {
                 actionStatus: false,
@@ -95,11 +75,7 @@ class PlayerPaymentController {
     static async blockPlayerPaymentMethod(req, res) {
         try {
             const response = await Player_payment_method.blockPaymentMethod(req.params)
-            if(response.actionStatus) {
-                return res.status(response.status).json(response)
-            } else {
-                return res.status(response.status).json(response)
-            }
+            return res.status(response.status).json(response)
         } catch (error) {
             return {
                 actionStatus: false,
@@ -113,11 +89,7 @@ class PlayerPaymentController {
     static async unblockPlayerPaymentMethod(req, res) {
         try {
             const response = await Player_payment_method.unblockPaymentMethod(req.params)
-            if(response.actionStatus) {
-                return res.status(response.status).json(response)
-            } else {
-                return res.status(response.status).json(response)
-            }
+            return res.status(response.status).json(response)
         } catch (error) {
             return {
                 actionStatus: false,
@@ -130,4 +102,4 @@ class PlayerPaymentController {
 
 }
 
-module.exports = PlayerPaymentController
+module.exports = PlayerPaymentMethodController

@@ -32,46 +32,30 @@ class PlayerController {
 
     static async createPlayerAccount(req, res) {
         const response = await Player.storePlayerData(req.body)
-        if(response.actionStatus) {
-            const mailer = new Mailer()
-            const email = await mailer.sendEmail()
-            if(email.actionStatus) {
-                return res.status(response.status).json(response)
-            } else {
-                // TODO: What will happens here
-            }
-        } else {
+        const mailer = new Mailer()
+        const email = await mailer.sendEmail()
+        if(email.actionStatus) {
             return res.status(response.status).json(response)
+        } else {
+            // TODO: What will happens here
         }
     }
 
     static async updatePlayerAccount(req, res) {
         const response = await Player.updatePlayerData(req.body)
-        if(response.actionStatus) {
-            return res.status(response.status).json(response)
-        } else {
-            return res.status(response.status).json(response)
-        }
+        return res.status(response.status).json(response)
     }
 
     static async getPlayer(req, res) {
         const { id } = req.params
         const response = await Player.getPlayerByID(id)
-        if(response.actionStatus) {
-            return res.status(response.status).json(response)
-        } else {
-            return res.status(response.status).json(response)
-        }
+        return res.status(response.status).json(response)
     }
 
     static async deletePlayerAccount(req, res) {
         const { id } = req.params
         const response = await Player.deletePlayer(id)
-        if(response.actionStatus) {
-            return res.status(response.status).json(response)
-        } else {
-            return res.status(response.status).json(response)
-        }
+        return res.status(response.status).json(response)
     }
 
     static async findPlayersByStateCityName(req, res) {
@@ -100,47 +84,27 @@ class PlayerController {
             }
         }
         const response = await Player.searchPlayersWithCityStateAndName(searchCondition)
-        if(response.actionStatus) {
-            return res.status(response.status).json(response)
-        } else {
-            return res.status(response.status).json(response)
-        }
+        return res.status(response.status).json(response)
     }
 
     static async verifyPlayerEmail(req, res) {
         const response = await Player.verifyEmailAccount(req.params)
-        if(response.actionStatus) {
-            return res.status(response.status).json(response)
-        } else {
-            return res.status(response.status).json(response)
-        }
+        return res.status(response.status).json(response)
     }
 
     static async blockPlayerAccount(req, res) {
         const response = await Player.blockPlayer(req.params)
-        if(response.actionStatus) {
-            return res.status(response.status).json(response)
-        } else {
-            return res.status(response.status).json(response)
-        }
+        return res.status(response.status).json(response)
     }
 
     static async unblockPlayerAccount(req, res) {
         const response = await Player.unblockPlayer(req.params)
-        if(response.actionStatus) {
-            return res.status(response.status).json(response)
-        } else {
-            return res.status(response.status).json(response)
-        }
+        return res.status(response.status).json(response)
     }
 
     static async resetPlayerAccountPassword(req, res) {
         const response = await Player.resetPassword(req.body)
-        if(response.actionStatus) {
-            return res.status(response.status).json(response)
-        } else {
-            return res.status(response.status).json(response)
-        }
+        return res.status(response.status).json(response)
     }
 
 }

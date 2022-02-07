@@ -13,26 +13,19 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      avatar: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
       birthday: {
         type: Sequelize.STRING
       },
-      address: {
-        type: Sequelize.STRING
-      },
       state: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       city: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       street: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       email: {
@@ -52,14 +45,20 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      verified: {
+      email_verified: {
+        type: Sequelize.BOOLEAN
+      },
+      phone_verified: {
+        type: Sequelize.BOOLEAN
+      },
+      identity_verified: {
+        type: Sequelize.BOOLEAN
+      },
+      terms_conditions: {
         type: Sequelize.BOOLEAN
       },
       blocked: {
         type: Sequelize.BOOLEAN
-      },
-      role: {
-        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

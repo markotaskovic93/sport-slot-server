@@ -103,7 +103,7 @@ module.exports = (sequelize, DataTypes) => {
                     })
                 }).then((result) => { // Transaction STARTED
                     return {
-                        actionStatus: true,
+                        actionStatus: result === 1 ? true : false,
                         status: 200,
                         message: result === 1 ? "Payment method is deleted" : "Can't find payment method",
                         body: result 
@@ -136,7 +136,7 @@ module.exports = (sequelize, DataTypes) => {
                     }
                 }).then((result) => { // Transaction STARTED
                     return {
-                        actionStatus: true,
+                        actionStatus: result === null ? true : false,
                         status: 200,
                         message: result === null ? "Can't find payment method" : "Payment finded",
                         body: result 
@@ -270,8 +270,8 @@ module.exports = (sequelize, DataTypes) => {
     };
     Player_payment_method.init({
         id: {
-        primaryKey: true,
-        type: DataTypes.BIGINT
+            primaryKey: true,
+            type: DataTypes.BIGINT
         },
         player_id: DataTypes.BIGINT,
         first_name: DataTypes.STRING,
@@ -281,7 +281,8 @@ module.exports = (sequelize, DataTypes) => {
         expiration_year: DataTypes.STRING,
         cvv: DataTypes.STRING,
         zip_code: DataTypes.STRING,
-        state: DataTypes.STRING
+        state: DataTypes.STRING,
+        blocked: DataTypes.BOOLEAN
     }, {
         sequelize,
         modelName: 'Player_payment_method',

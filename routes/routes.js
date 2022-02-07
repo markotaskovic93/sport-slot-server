@@ -18,25 +18,10 @@ const {
 } = require('../middleware/validation/searchValidations.js')
 
 const PlayerController = require('../controllers/PlayerController.js')
-const PlayerPaymentController = require('../controllers/PlayerPaymentController.js')
+const PlayerPaymentMethodController = require('../controllers/PlayerPaymentMethodController.js')
+const CourtOwnerController = require('../controllers/CourtOwnerController.js')
+const CourtOwnerPaymentMethodController = require('../controllers/CourtOwnerPaymentMethodController.js')
 
-// const {
-//     loginCourtOwner,
-//     createCourtOwnerAccount,
-//     updateCourtOwnerAccount,
-//     deleteCourtOwnerAccount,
-//     getBlockedCourtOwners,
-//     getBlockedCourtOwnersByState,
-//     getUnblockedCourtOwners,
-//     getUnblockedCourtOwnersByState,
-//     getVerifiedCourtOwners,
-//     getVerifiedCourtOwnersByState,
-//     getUnverifiedCourtOwners,
-//     getUnverifiedCourtOwnersByState,
-//     verifyCourtOwnerAccount,
-//     blockCourtOwnerAccount,
-//     unblockCourtOwnerAccount,
-// } = require('../controllers/CourtOwnerController.js')
 
 const {
     createCourt,
@@ -84,18 +69,27 @@ router.get('/player/unblock-player-account/:playerId', [], (req, res) => PlayerC
 router.post('/player/reset-password', [], (req, res) => PlayerController.resetPlayerAccountPassword(req, res)) // done
 // --------------------------------------- END OF Player Routes ------------------------------------------- //
 
-// Player Payments Routes
-router.post('/player/create-payment-method', [], (req, res) => PlayerPaymentController.createPlayerPaymentMethod(req, res)) // done
-router.put('/player/update-payment-method', [], (req, res) => PlayerPaymentController.updatePlayerPaymentMethod(req, res)) // done
-router.delete('/player/delete-payment-method/:playerId/:methodId', [], (req, res) => PlayerPaymentController.deletePlayerPaymentMethod(req, res)) // done
-router.get('/player/get-payment-method-details/:playerId/:methodId', [], (req, res) => PlayerPaymentController.getPaymentMethodDetails(req, res)) // done
-router.get('/player/get-player-payment-methods/:playerId', [], (req, res) => PlayerPaymentController.getPlayerPaymentMethods(req, res)) // done
-router.get('/player/block-payment-method/:playerId/:methodId', [], (req, res) => PlayerPaymentController.blockPlayerPaymentMethod(req, res)) //done
-router.get('/player/unblock-payment-method/:playerId/:methodId', [], (req, res) => PlayerPaymentController.unblockPlayerPaymentMethod(req, res)) // done
+// Player Payments Method Routes
+router.post('/player/create-payment-method', [], (req, res) => PlayerPaymentMethodController.createPlayerPaymentMethod(req, res)) // done
+router.put('/player/update-payment-method', [], (req, res) => PlayerPaymentMethodController.updatePlayerPaymentMethod(req, res)) // done
+router.delete('/player/delete-payment-method/:playerId/:methodId', [], (req, res) => PlayerPaymentMethodController.deletePlayerPaymentMethod(req, res)) // done
+router.get('/player/get-payment-method-details/:playerId/:methodId', [], (req, res) => PlayerPaymentMethodController.getPaymentMethodDetails(req, res)) // done
+router.get('/player/get-player-payment-methods/:playerId', [], (req, res) => PlayerPaymentMethodController.getPlayerPaymentMethods(req, res)) // done
+router.get('/player/block-payment-method/:playerId/:methodId', [], (req, res) => PlayerPaymentMethodController.blockPlayerPaymentMethod(req, res)) //done
+router.get('/player/unblock-payment-method/:playerId/:methodId', [], (req, res) => PlayerPaymentMethodController.unblockPlayerPaymentMethod(req, res)) // done
 // ----------------------------------------- END OF Player Payment Routes -------------------------------------------------- //
 
 
+// Court Owner Routes
+router.post('/court-owner/login', [], (req, res) => CourtOwnerController.loginCourtOwner(req, res)) // done
+router.post('/court-owner/create-court-owner', [], (req, res) => CourtOwnerController.createCourtOwnerAccount(req, res)) // done
+router.put('/court-owner/update-court-owener', [], (req, res) => CourtOwnerController.updateCourtOwnerAccount(req, res)) // done
+router.get('/court-owner/get-court-owner/:id', [], (req, res) => CourtOwnerController.getCourtOwnerByID(req, res)) // done
+router.delete('/court-owner/delete-court-owner/:id', [], (req, res) => CourtOwnerController.deleteCourtOwnerAccount(req, res)) // done
 
+// Court Owner Payment Method Routes
+router.post('/court-owner/create-payment-method', [], (req, res) => CourtOwnerPaymentMethodController.createCourtOwnerPaymentMethod(req, res)) // done
+router.put('/court-owner/update-payment-method', [], (req, res) => CourtOwnerPaymentMethodController.updateCourtOwnerPaymentMethod(req, res)) //
 
 
 
