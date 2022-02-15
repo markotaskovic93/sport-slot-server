@@ -32,13 +32,13 @@ class PlayerController {
 
     static async createPlayerAccount(req, res) {
         const response = await Player.storePlayerData(req.body)
-        const mailer = new Mailer()
-        const email = await mailer.sendEmail()
-        if(email.actionStatus) {
+        // const mailer = new Mailer()
+        // const email = await mailer.sendEmail()
+        //if(email.actionStatus) {
             return res.status(response.status).json(response)
-        } else {
-            // TODO: What will happens here
-        }
+        // } else {
+        //     // TODO: What will happens here
+        // }
     }
 
     static async updatePlayerAccount(req, res) {
@@ -104,6 +104,11 @@ class PlayerController {
 
     static async resetPlayerAccountPassword(req, res) {
         const response = await Player.resetPassword(req.body)
+        return res.status(response.status).json(response)
+    }
+
+    static async updateNotificationSettings(req, res) {
+        const response = await Player.updateNotification(req.body)
         return res.status(response.status).json(response)
     }
 

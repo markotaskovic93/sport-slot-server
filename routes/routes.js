@@ -21,37 +21,19 @@ const PlayerController = require('../controllers/PlayerController.js')
 const PlayerPaymentMethodController = require('../controllers/PlayerPaymentMethodController.js')
 const CourtOwnerController = require('../controllers/CourtOwnerController.js')
 const CourtOwnerPaymentMethodController = require('../controllers/CourtOwnerPaymentMethodController.js')
+const CourtController = require('../controllers/CourtController.js')
+const SlotController = require('../controllers/SlotController.js')
+const SlotReservationController = require('../controllers/SlotReservationController.js')
 
 
-const {
-    createCourt,
-    updateCourt,
-    getCourtsByCourtOwner,
-    getCourt,
-    blockCourt,
-    unblockCourt,
-    searchCourt,
-    deleteCourt
-} = require('../controllers/CourtController.js')
+// const {
+//     createSlotReservation
+// } = require('../controllers/SlotReservationController.js')
 
-const {
-    createCourtSlot,
-    getCourtSlots,
-    updateCourtSlot,
-    blockCourtSlot,
-    unblockCourtSlot,
-    deleteCourtSlot,
-    deleteCourtSlots
-} = require('../controllers/CourtSlotCotroller.js')
-
-const {
-    createSlotReservation
-} = require('../controllers/SlotReservationController.js')
-
-const {
-    respondToInvitation
-} = require('../controllers/SlotPlayersController.js');
-const { route } = require('express/lib/application');
+// const {
+//     respondToInvitation
+// } = require('../controllers/SlotPlayersController.js');
+// const { route } = require('express/lib/application');
 
 
 
@@ -67,6 +49,7 @@ router.get('/player/verify-email/:playerId', [], (req, res) => PlayerController.
 router.get('/player/block-player-account/:playerId', [], (req, res) => PlayerController.blockPlayerAccount(req, res)) // done
 router.get('/player/unblock-player-account/:playerId', [], (req, res) => PlayerController.unblockPlayerAccount(req, res)) // done
 router.post('/player/reset-password', [], (req, res) => PlayerController.resetPlayerAccountPassword(req, res)) // done
+router.put('/player/notification-settings', [], (req, res) => PlayerController.updateNotificationSettings(req, res)) // 
 // --------------------------------------- END OF Player Routes ------------------------------------------- //
 
 // Player Payments Method Routes
@@ -99,41 +82,47 @@ router.delete('/court-owner/delete-payment-method/:methodId', [], (req, res) => 
 // ----------------------------------------- End of Court Owner Payment Routes ----------------------------------------------- //
 
 
+// Court Routes
+router.post('/court/create-court', [], (req, res) => CourtController.createCourt(req, res)) //
+router.put('/court/update-court', [], (req, res) => CourtController.updateCourtData(req, res)) // 
+router.get('/court/get-court/:court_id', [], (req, res) => CourtController.getCourt(req, res)) //
+router.get('/court/get-courts-by-court-owner/:court_owner_id', [], (req, res) => CourtController.getCourts(req, res)) //
+router.delete('/court/delete-court/:court_id', [], (req, res) => CourtController.deleteCourt(req, res)) //
+router.put('/court/block-court', [], (req, res) => CourtController.blockCourt(req, res)) // 
+router.put('/court/unblock-court', [], (req, res) => CourtController.unblockCourt(req, res)) //
+router.put('/court/promote-court', [], (req, res) => CourtController.promoteCourt(req, res)) //
+router.put('/court/remove-promotion', [], (req, res) => CourtController.removePromotion(req, res)) //
+router.get('/court/search-court', [], (req, res) => CourtController.searchCourts()) // 
+// ------------------------------------------ End Of Court Routes ------------------------------------------------------ //
 
 
 
+// Slot Routes
+router.post('/slot/create-slot', [], (req, res) => SlotController.createSlot(req, res)) //
+router.delete('/slot/remove-slot', [], (req, res) => SlotController.removeSlot(req, res)) //
+router.put('/slot/block-slot', [], (req, res) => SlotController.blockSlot(req, res)) //
+router.put('/slot/unblock-slot', [], (req, res) => SlotController.unblockSlot(req, res)) //
+router.get('/slot/get-slot/:slot_id', [], (req, res) => SlotController.getSlot(req, res)) //
+router.get('/slot/get-slots/:court_id', [], (req, res) => SlotController.getSlots(req, res)) //
+router.put('/slot/book-slot', [], (req, res) => SlotController.bookSlotByAdminPlayer(req, res)) //
+router.put('/slot/unbook-slot', [], (req, res) => SlotController.unbookSlotByAdminPlayer(req, res)) //
+// ------------------------------------------- End of Slot Routes ------------------------------------------------------ //
 
 
 
+// Slot Reservations
+router.post('/slot-reservation/create-slot-reservation', [], (req, res) => SlotReservationController.createSlotReservation(req, res)) //
+router.get('/slot-reservation/get-slot-reservation/:slot_reservation_id', [], (req, res) => SlotReservationController.getSlotReservation(req, res)) //
+router.get('/slot-reservation/get-slot-reservations/:slot_reservation_id', [], (req, res) => SlotReservationController.getSlotReservations(req, res)) //
+router.put('/slot-reservation/update-slot-reservation', [], (req, res) => SlotReservationController.updateSlotReservation(req, res)) // 
+router.delete('/slot-reservation/delete-slot-reservation/:slot_reservation_id', [], (req, res) => SlotReservationController.deleteSlotReservation(req, res)) // 
 
 
 
+// // Court slot reservation
+// router.post('/slot-reservation/create-slot-reservation', (req, res) => createSlotReservation(req, res)) // done
 
-
-// Court routes
-router.post('/court/create-court', (req, res) => createCourt(req, res))
-router.put('/court/update-court', (req, res) => updateCourt(req, res))
-router.delete('/court/delete-court', (req, res) => deleteCourt(req, res)) // done
-router.get('/court/get-courts-by-owner/:court_owner_id', (req, res) => getCourtsByCourtOwner(req, res))
-router.get('/court/get-court/:court_id/:court_owner_id', (req, res) => getCourt(req, res))
-router.get('/court/block-court/:court_id', (req, res) => blockCourt(req, res))
-router.get('/court/unblock-court/:court_id', (req, res) => unblockCourt(req, res))
-router.get('/court/search-courts/:sport/:date/:start_time/:location/:court_enviroment/:payment_type', [validator.query(searchValidation)], (req, res) => searchCourt(req, res))
-// -------------------------------------- End of Court Routes -------------------------------------------- //
-
-// Court Slot routes
-router.post('/court-slot/create-slot', (req, res) => createCourtSlot(req, res)) // done
-router.put('/court-slot/update-slot', (req, res) => updateCourtSlot(req, res)) // done
-router.get('/court-slot/get-court-slots/:id', (req, res) => getCourtSlots(req, res)) // done
-router.get('/court-slot/block-slot/:id', (req, res) => blockCourtSlot(req, res)) // done
-router.get('/court-slot/unblock-slot/:id', (req, res) => unblockCourtSlot(req, res)) // done
-router.get('/court-slot/delete-slots', (req, res) => deleteCourtSlots(req, res)) // done
-router.delete('/court-slot/delete-slot', (req, res) => deleteCourtSlot(req, res)) // done
-
-// Court slot reservation
-router.post('/slot-reservation/create-slot-reservation', (req, res) => createSlotReservation(req, res)) // done
-
-// Slot players
-router.post('/slot-players/respond-to-invitation', (req, res) => respondToInvitation(req, res))
+// // Slot players
+// router.post('/slot-players/respond-to-invitation', (req, res) => respondToInvitation(req, res))
 
 module.exports = router

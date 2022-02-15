@@ -5,7 +5,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      court_slot_id: {
+      slot_id: {
         allowNull: false,
         type: Sequelize.BIGINT
       },
@@ -25,8 +25,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      blocked: {
-        type: Sequelize.BOOLEAN
+      payment_type: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

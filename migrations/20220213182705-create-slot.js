@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Court_slots', {
+    await queryInterface.createTable('Slots', {
       id: {
         primaryKey: true,
         type: Sequelize.BIGINT
@@ -10,31 +10,35 @@ module.exports = {
         allowNull: false,
         type: Sequelize.BIGINT
       },
-      court_slot_date: {
+      slot_date: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      court_slot_start_time: {
+      slot_start_time: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      court_slot_end_time: {
+      slot_end_time: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      court_slot_price: {
+      slot_price: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      court_slot_discount: {
+      slot_discount: {
         allowNull: true,
         type: Sequelize.STRING
       },
-      booked: {
+      slot_paid: {
         allowNull: false,
         type: Sequelize.BOOLEAN
       },
-      blocked: {
+      slot_booked: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+      },
+      slot_blocked: {
         allowNull: false,
         type: Sequelize.BOOLEAN
       },
@@ -49,6 +53,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Court_slots');
+    await queryInterface.dropTable('Slots');
   }
 };

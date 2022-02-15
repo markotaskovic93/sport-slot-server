@@ -74,6 +74,22 @@ module.exports = {
         allowNull: false,
         type: Sequelize.BOOLEAN
       },
+      notification_invites: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+      },
+      notification_messages: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+      },
+      notification_reminders: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+      },
+      notification_promotions: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

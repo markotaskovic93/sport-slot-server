@@ -1,36 +1,38 @@
 const { Model } = require('sequelize');
 const IDGenerator = require('../helpers/IDGenerator.js')
-const { reservation_status_types } = require('../types/slot-reservation/reservation_types.js')
 
 module.exports = (sequelize, DataTypes) => {
-    class Slot_reservation extends Model {
+    class Slot extends Model {
         
-        static async storeSlotsReservation(data) {
+        static async storeSlots(data) {
             try {
-                const { slot_id, admin_player_id, players_needed, payment_type } = data
-                const generatedPassword = IDGenerator()
+                const { court_id, slot_date, slot_start_time, slot_end_time, slot_price, slot_discount } = data
+                const slotId = IDGenerator()
                 return sequelize.transaction((t) => { 
-                    return Slot_reservation.create({
-                        id: generatedPassword,
-                        slot_id: slot_id,
-                        admin_player_id: admin_player_id,
-                        players_needed: players_needed,
-                        players_accepted: 1,
-                        reservation_status: reservation_status_types.open,
-                        payment_type: payment_type
+                    return Slot.create({
+                        id: slotId,
+                        court_id: court_id,
+                        slot_date: slot_date,
+                        slot_start_time: slot_start_time,
+                        slot_end_time: slot_end_time,
+                        slot_price: slot_price,
+                        slot_discount: slot_discount,
+                        slot_paid: false,
+                        slot_booked: slot_booked,
+                        slot_blocked: false
                     })
-                }).then((result) => { // Transaction STARTED
+                }).then((result) => {// Transaction STARTED
                     return {
                         actionStatus: true,
                         status: 200,
-                        message: "Slot reservation is created",
+                        message: "Slot is created",
                         body: result 
                     }
-                }).catch((err) => { // Transaction ROOLBACK
+                }).catch((err) => {// Transaction ROOLBACK
                     return {
                         actionStatus: false,
                         status: 403,
-                        message: "Error while creating slot reservation",
+                        message: "Error while creating slot",
                         body: err.errors 
                     }
                 })
@@ -44,32 +46,205 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async updatePlayersAccepted(data) {
+        static async removeSlotByCourt(data) {
             try {
-                const { slot_reservation_id, players_accepted } = data
+                const { slot_id, court_id } = data
                 return sequelize.transaction((t) => { 
-                    return Slot_reservation.update({
-                        players_accepted: players_accepted,
+                    return Slot.destroy({
+                        where: {
+                            id: slot_id,
+                            court_id: court_id
+                        }
+                    })
+                }).then((result) => {// Transaction STARTED
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        message: "Slot is removed",
+                        body: result 
+                    }
+                }).catch((err) => {// Transaction ROOLBACK
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error while removing slot",
+                        body: err.errors 
+                    }
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+            
+        }
+
+        static async blockSlotByCourt(data) {
+            try {
+                const { slot_id, court_id } = data
+                return sequelize.transaction((t) => { 
+                    return Slot.update({
+                        slot_blocked: true
+                    },{
+                        where: {
+                            id: slot_id,
+                            court_id: court_id
+                        }
+                    })
+                }).then((result) => {// Transaction STARTED
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        message: "Slot is blocked",
+                        body: result 
+                    }
+                }).catch((err) => {// Transaction ROOLBACK
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error while blocking slot",
+                        body: err.errors 
+                    }
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
+        static async unblockSlotByCourt(data) {
+            try {
+                const { slot_id, court_id } = data
+                return sequelize.transaction((t) => { 
+                    return Slot.update({
+                        slot_blocked: false
+                    },{
+                        where: {
+                            id: slot_id,
+                            court_id: court_id
+                        }
+                    })
+                }).then((result) => {// Transaction STARTED
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        message: "Slot is unblocked",
+                        body: result 
+                    }
+                }).catch((err) => {// Transaction ROOLBACK
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error while unblocking slot",
+                        body: err.errors 
+                    }
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
+        static async getSlotById(data) {
+            try {
+                const { slot_id } = data
+                return Slot.findOne({
+                    where: {
+                        id: slot_id
+                    }
+                }).then((result) => {
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        message: "Slot",
+                        body: result 
+                    }
+                }).catch((err) => {
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error while finding slot slot",
+                        body: err.errors 
+                    }
+                })  
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
+        static async getSlotsByCourt(data) {
+            try {
+                const { court_id } = data
+                return Slot.findAll({
+                    where: {
+                        court_id: court_id
+                    }
+                }).then((result) => {
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        message: "Slots",
+                        body: result 
+                    }
+                }).catch((err) => {
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error while finding slot slots",
+                        body: err.errors 
+                    }
+                })  
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
+        static async setSlotBooked(slot_id) {
+            try {
+                return sequelize.transaction((t) => { 
+                    return Slot.update({
+                        slot_booked: true
                     }, {
                         where: {
-                            id: slot_reservation_id
+                            id: slot_id
                         }
                     })
-                }).then((result) => {// Transaction STARTED
+                }).then((result) => {
                     return {
                         actionStatus: true,
                         status: 200,
-                        message: "Updated player accepted field",
+                        message: "Slot is booked",
                         body: result 
                     }
-                }).catch((err) => {// Transaction ROOLBACK
+                }).catch((err) => {
                     return {
                         actionStatus: false,
                         status: 403,
-                        message: "Error while updating player accepted field",
+                        message: "Error while booking slot",
                         body: err.errors 
                     }
-                })
+                }) 
             } catch (error) {
                 return {
                     actionStatus: false,
@@ -80,32 +255,31 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async updateReservationStatus(data) {
+        static async unbookSlot(slot_id) {
             try {
-                const { slot_reservation_id, reservation_status } = data
                 return sequelize.transaction((t) => { 
-                    return Slot_reservation.update({
-                        reservation_status: reservation_status,
+                    return Slot.update({
+                        slot_booked: false
                     }, {
                         where: {
-                            id: slot_reservation_id
+                            id: slot_id
                         }
                     })
-                }).then((result) => {// Transaction STARTED
+                }).then((result) => {
                     return {
                         actionStatus: true,
                         status: 200,
-                        message: "Updated reservation status field",
+                        message: "Slot is booked",
                         body: result 
                     }
-                }).catch((err) => {// Transaction ROOLBACK
+                }).catch((err) => {
                     return {
                         actionStatus: false,
                         status: 403,
-                        message: "Error while updating reservation status field",
+                        message: "Error while booking slot",
                         body: err.errors 
                     }
-                })
+                }) 
             } catch (error) {
                 return {
                     actionStatus: false,
@@ -115,167 +289,26 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         }
-
-        static async replaceAdminPlayer(data) {
-            try {
-                const { slot_reservation_id, player_id } = data
-                return sequelize.transaction((t) => { 
-                    return Slot_reservation.update({
-                        admin_player_id: player_id,
-                    }, {
-                        where: {
-                            id: slot_reservation_id
-                        }
-                    })
-                }).then((result) => {// Transaction STARTED
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "replaced admin player",
-                        body: result 
-                    }
-                }).catch((err) => {// Transaction ROOLBACK
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while replacing admin player",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async updatePaymentType(data) {
-            try {
-                const { slot_reservation_id, player_id, payment_type } = data
-                return sequelize.transaction((t) => { 
-                    return Slot_reservation.update({
-                        payment_type: payment_type
-                    }, {
-                        where: {
-                            id: slot_reservation_id,
-                            admin_player_id: player_id
-                        }
-                    })
-                }).then((result) => {// Transaction STARTED
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "updated payment type",
-                        body: result 
-                    }
-                }).catch((err) => {// Transaction ROOLBACK
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while updating payment type",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async updatePlayersNeeded(data) {
-            try {
-                const { slot_reservation_id, player_id, players_needed } = data
-                return sequelize.transaction((t) => { 
-                    return Slot_reservation.update({
-                        players_needed: players_needed
-                    }, {
-                        where: {
-                            id: slot_reservation_id,
-                            admin_player_id: player_id
-                        }
-                    })
-                }).then((result) => {// Transaction STARTED
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "updated players needed",
-                        body: result 
-                    }
-                }).catch((err) => {// Transaction ROOLBACK
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while updating players needed",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async deleteSlotReservation(data) {
-            try {
-                const { slot_reservation_id, player_id } = data
-                return sequelize.transaction((t) => { 
-                    return Slot_reservation.destroy({
-                        where: {
-                            id: slot_reservation_id,
-                            admin_player_id: player_id
-                        }
-                    })
-                }).then((result) => {// Transaction STARTED
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "removed slot reservation",
-                        body: result 
-                    }
-                }).catch((err) => {// Transaction ROOLBACK
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while removing slot reservation",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
+        
 
     };
-    Slot_reservation.init({
+    Slot.init({
         id: {
             primaryKey: true,
             type: DataTypes.BIGINT
         },
-        slot_id: DataTypes.BIGINT,
-        admin_player_id: DataTypes.BIGINT,
-        players_needed: DataTypes.STRING,
-        players_accepted: DataTypes.STRING,
-        reservation_status: DataTypes.STRING,
-        payment_type: DataTypes.STRING
+        court_id: DataTypes.BIGINT,
+        slot_date: DataTypes.STRING,
+        slot_start_time: DataTypes.STRING,
+        slot_end_time: DataTypes.STRING,
+        slot_price: DataTypes.STRING,
+        slot_discount: DataTypes.STRING,
+        slot_paid: DataTypes.BOOLEAN,
+        slot_booked: DataTypes.BOOLEAN,
+        slot_blocked: DataTypes.BOOLEAN
     }, {
         sequelize,
-        modelName: 'Slot_reservation',
+        modelName: 'Slot',
     });
-    return Slot_reservation;
+    return Slot;
 };

@@ -39,12 +39,11 @@ module.exports = (sequelize, DataTypes) => {
         }
     
         static async storePlayerData(data) {
-            // courtVisited ???
-            // moneySpent - ok
-            // gamesPlayed - ok
-            // paymentDetails - ok
-            // ratings - ok
-            // notificationSettings - ok
+            // moneySpent - ok -> ovo ce da se vadi iz tabele player_payment_transaction
+            // gamesPlayed - ok -> 
+            // paymentDetails - ok -> reseno
+            // ratings - ok -> 
+            // notificationSettings - ok -> reseno
             try {
                 const { 
                     full_name, birthday, height, email, 
@@ -73,6 +72,10 @@ module.exports = (sequelize, DataTypes) => {
                         phone_verified: false,
                         terms_conditions: terms,
                         blocked: false,
+                        notification_invites: true,
+                        notification_messages: true,
+                        notification_reminders: true,
+                        notification_promotions: true
                     })
                 }).then((result) => {// Transaction STARTED
                     return {
@@ -401,37 +404,78 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async updateNotification(data) {
+            try {
+                const { player_id, notification_invites, notification_messages, notification_reminders, notification_promotions } = data
+                return sequelize.transaction((t) => { 
+                    return Player.update({
+                        notification_invites: notification_invites,
+                        notification_messages: notification_messages,
+                        notification_reminders: notification_reminders,
+                        notification_promotions: notification_promotions
+                    }, {
+                        where: {
+                            id: player_id
+                        }
+                    })
+                }).then((result) => { // Transaction STARTED
+                    console.log(result)
+                    return {
+                        actionStatus: result[0] === 1 ? true : false,
+                        status: 200,
+                        message: result[0] === 1 ? "Updated notifications" : "Can't update notifications",
+                        body: result 
+                    }
+                }).catch((err) => { // Transaction ROOLBACK
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Can't update notifications",
+                        body: err 
+                    }
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
 
     } // Model class
 
-
-
-
-  Player.init({
-    id: {
-      primaryKey: true,
-      type: DataTypes.BIGINT
-    },
-    full_name: DataTypes.STRING,
-    birthday: DataTypes.STRING,
-    height: DataTypes.STRING,
-    email: DataTypes.STRING,
-    state: DataTypes.STRING, 
-    city: DataTypes.STRING,
-    street: DataTypes.STRING,
-    gender: DataTypes.STRING,
-    age: DataTypes.STRING,
-    phone: DataTypes.STRING,
-    password: DataTypes.STRING,
-    bio: DataTypes.TEXT,
-    sport: DataTypes.STRING,
-    email_verified: DataTypes.BOOLEAN,
-    phone_verified: DataTypes.BOOLEAN,
-    terms_conditions: DataTypes.BOOLEAN,
-    blocked: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'Player',
-  });
-  return Player;
+    Player.init({
+        id: {
+        primaryKey: true,
+        type: DataTypes.BIGINT
+        },
+        full_name: DataTypes.STRING,
+        birthday: DataTypes.STRING,
+        height: DataTypes.STRING,
+        email: DataTypes.STRING,
+        state: DataTypes.STRING, 
+        city: DataTypes.STRING,
+        street: DataTypes.STRING,
+        gender: DataTypes.STRING,
+        age: DataTypes.STRING,
+        phone: DataTypes.STRING,
+        password: DataTypes.STRING,
+        bio: DataTypes.TEXT,
+        sport: DataTypes.STRING,
+        email_verified: DataTypes.BOOLEAN,
+        phone_verified: DataTypes.BOOLEAN,
+        terms_conditions: DataTypes.BOOLEAN,
+        blocked: DataTypes.BOOLEAN,
+        notification_invites: DataTypes.BOOLEAN,
+        notification_messages: DataTypes.BOOLEAN,
+        notification_reminders: DataTypes.BOOLEAN,
+        notification_promotions: DataTypes.BOOLEAN
+    }, {
+        sequelize,
+        modelName: 'Player',
+    });
+    return Player;
 };

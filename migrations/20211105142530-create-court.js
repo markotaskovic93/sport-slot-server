@@ -3,27 +3,24 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Courts', {
       id: {
+        allowNull: false,
         primaryKey: true,
         type: Sequelize.BIGINT
       },
       court_owner_id: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.BIGINT
       },
       court_name: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.STRING
       },
       court_description: {
         allowNull: true,
         type: Sequelize.TEXT
       },
-      court_address: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
       court_enviroment: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.STRING
       },
       court_size: {
@@ -31,7 +28,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       court_available_sports: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
       court_baners: {
@@ -39,27 +36,23 @@ module.exports = {
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
       court_state: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.STRING
       },
       court_city: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.STRING
       },
       court_street: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.STRING
       },
       court_facilities: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
-      court_payment_type: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      verified: {
-        allowNull: true,
+      court_promoted: {
+        allowNull: false,
         type: Sequelize.BOOLEAN
       },
       blocked: {
