@@ -112,11 +112,11 @@ router.put('/slot/unbook-slot', [], (req, res) => SlotController.unbookSlotByAdm
 
 // Slot Reservations
 router.post('/slot-reservation/create-slot-reservation', [], (req, res) => SlotReservationController.createSlotReservation(req, res)) //
-router.get('/slot-reservation/get-slot-reservation/:slot_reservation_id', [], (req, res) => SlotReservationController.getSlotReservation(req, res)) //
-router.get('/slot-reservation/get-slot-reservations/:slot_reservation_id', [], (req, res) => SlotReservationController.getSlotReservations(req, res)) //
 router.put('/slot-reservation/update-slot-reservation', [], (req, res) => SlotReservationController.updateSlotReservation(req, res)) // 
+router.get('/slot-reservation/get-slot-reservation/:slot_reservation_id/:player_id', [], (req, res) => SlotReservationController.getSlotReservation(req, res)) //
+router.get('/slot-reservation/get-slot-reservations/:slot_reservation_id/:player_id', [], (req, res) => SlotReservationController.getSlotReservations(req, res)) //
+router.put('/slot-reservation/replace-admin-player', [], (req, res) => SlotReservationController.replaceAdminPlayer(req, res)) //
 router.delete('/slot-reservation/delete-slot-reservation/:slot_reservation_id', [], (req, res) => SlotReservationController.deleteSlotReservation(req, res)) // 
-
 
 
 // // Court slot reservation
