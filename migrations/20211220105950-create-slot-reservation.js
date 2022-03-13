@@ -25,6 +25,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      players_can_join: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       payment_type: {
         allowNull: false,
         type: Sequelize.STRING

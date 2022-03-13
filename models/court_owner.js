@@ -29,8 +29,9 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         static async storeCourtOwnerData(data) {
+            console.log(data)
             try {
-                const { first_name, last_name, birthday, email, state, city, street, phone, personal_id, password, terms_conditions } = data
+                const { first_name, last_name, email, state, city, phone, personal_id, password, terms_conditions } = data
                 let hashedPassword = bcrypt.hashSync(password, 8)
                 let generatedID = IDGenerator()
                 return sequelize.transaction((t) => {
@@ -38,11 +39,9 @@ module.exports = (sequelize, DataTypes) => {
                         id: generatedID,
                         first_name: first_name,
                         last_name: last_name,
-                        birthday: birthday,
                         email: email,
                         state: state,
                         city: city,
-                        street: street,
                         phone: phone,
                         personal_id: personal_id,
                         password: hashedPassword,
@@ -79,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
 
         static async updateCourtOwnerData(data) {
             try {
-                const { first_name, last_name, birthday, phone, personal_id, state, city, street, id } = data
+                const { first_name, last_name, phone, personal_id, state, city, id } = data
                 const courtOwner = await Court_owner.getCourtOwnerById(id)
                 if(courtOwner.body) {
                     return sequelize.transaction((t) => { 
@@ -88,8 +87,6 @@ module.exports = (sequelize, DataTypes) => {
                             last_name: last_name,
                             state: state,
                             city: city,
-                            street: street,
-                            birthday: birthday,
                             phone: phone,
                             personal_id: personal_id,
                         }, {
@@ -201,14 +198,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         first_name: DataTypes.STRING,
         last_name: DataTypes.STRING,
-        birthday: DataTypes.STRING,
         email: DataTypes.STRING,
         password: DataTypes.STRING,
         phone: DataTypes.STRING,
         personal_id: DataTypes.STRING,
         state: DataTypes.STRING,
         city: DataTypes.STRING,
-        street: DataTypes.STRING,
         email_verified: DataTypes.BOOLEAN,
         phone_verified: DataTypes.BOOLEAN,
         identity_verified: DataTypes.BOOLEAN,

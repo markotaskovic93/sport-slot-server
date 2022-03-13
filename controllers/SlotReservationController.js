@@ -4,7 +4,7 @@ class SlotReservationController {
 
     static async createSlotReservation(req, res) {
         try {
-            const response = await Slot.storeSlotsReservation(req.body)
+            const response = await Slot_reservation.createReservation(req.body)
             return res.status(response.status).json(response)
         } catch (error) {
             return {
@@ -14,53 +14,11 @@ class SlotReservationController {
                 body: error 
             }
         }
-    }
+    } 
 
-    static async updateSlotReservation(req, res) {
+    static async getMySlotReservations(req, res) {
         try {
-            const response = await Slot.updateReservation(req.body)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
-    static async getSlotReservation(req, res) {
-        try {
-            const response = await Slot.getReservation(req.params)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
-    static async getSlotReservations(req, res) {
-        try {
-            const response = await Slot.getReservations(req.params)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
-    static async replaceAdminPlayer(req, res) {
-        try {
-            const response = await Slot.replaceAdminPlayer(req.body)
+            const response = await Slot_reservation.getMySlotReservations(req.params)
             return res.status(response.status).json(response)
         } catch (error) {
             return {
@@ -74,7 +32,7 @@ class SlotReservationController {
 
     static async deleteSlotReservation(req, res) {
         try {
-            const response = await Slot.deleteReservation(req.params)
+            const response = await Slot_reservation.deleteReservation(req.params)
             return res.status(response.status).json(response)
         } catch (error) {
             return {

@@ -13,18 +13,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      birthday: {
-        type: Sequelize.STRING
-      },
       state: {
         allowNull: true,
         type: Sequelize.STRING
       },
       city: {
-        allowNull: true,
-        type: Sequelize.STRING
-      },
-      street: {
         allowNull: true,
         type: Sequelize.STRING
       },

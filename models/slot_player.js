@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Slot_player.init({
+    id: {
+      primaryKey: true,
+      type: DataTypes.BIGINT
+    },
     slot_reservation_id: DataTypes.BIGINT,
     player_id: DataTypes.BIGINT,
     invitation_status: DataTypes.BOOLEAN,

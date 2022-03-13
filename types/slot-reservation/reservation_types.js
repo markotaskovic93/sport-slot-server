@@ -1,6 +1,6 @@
 const reservation_status_types = Object.freeze({
     open: 'open',
-    closed: 'closed'
+    close: 'close'
 })
 
 const reservation_payment_types = Object.freeze({

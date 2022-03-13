@@ -27,20 +27,14 @@ const SlotReservationController = require('../controllers/SlotReservationControl
 
 
 // const {
-//     createSlotReservation
-// } = require('../controllers/SlotReservationController.js')
-
-// const {
 //     respondToInvitation
 // } = require('../controllers/SlotPlayersController.js');
 // const { route } = require('express/lib/application');
 
 
-
-
 // Player Routes
 router.post('/player/login', [], (req, res) => PlayerController.loginPlayer(req, res)) // done
-router.post('/player/create-player', [validator.query(createPlayerValidation)], (req, res) => PlayerController.createPlayerAccount(req, res)) // done
+router.post('/player/create-player', [validator.body(createPlayerValidation)], (req, res) => PlayerController.createPlayerAccount(req, res)) // done
 router.put('/player/update-player', [validator.query(updatePlayerValidation)], (req, res) => PlayerController.updatePlayerAccount(req, res)) // done
 router.get('/player/get-player/:id', [validator.query(getPlayerByID)], (req, res) => PlayerController.getPlayer(req, res)) // done
 router.delete('/player/delete-player/:id', [], (req, res) => PlayerController.deletePlayerAccount(req, res)) // done
@@ -51,6 +45,7 @@ router.get('/player/unblock-player-account/:playerId', [], (req, res) => PlayerC
 router.post('/player/reset-password', [], (req, res) => PlayerController.resetPlayerAccountPassword(req, res)) // done
 router.put('/player/notification-settings', [], (req, res) => PlayerController.updateNotificationSettings(req, res)) // 
 // --------------------------------------- END OF Player Routes ------------------------------------------- //
+
 
 // Player Payments Method Routes
 router.post('/player/create-payment-method', [], (req, res) => PlayerPaymentMethodController.createPlayerPaymentMethod(req, res)) // done
@@ -96,7 +91,6 @@ router.get('/court/search-court', [], (req, res) => CourtController.searchCourts
 // ------------------------------------------ End Of Court Routes ------------------------------------------------------ //
 
 
-
 // Slot Routes
 router.post('/slot/create-slot', [], (req, res) => SlotController.createSlot(req, res)) //
 router.delete('/slot/remove-slot', [], (req, res) => SlotController.removeSlot(req, res)) //
@@ -109,20 +103,11 @@ router.put('/slot/unbook-slot', [], (req, res) => SlotController.unbookSlotByAdm
 // ------------------------------------------- End of Slot Routes ------------------------------------------------------ //
 
 
-
 // Slot Reservations
 router.post('/slot-reservation/create-slot-reservation', [], (req, res) => SlotReservationController.createSlotReservation(req, res)) //
-router.put('/slot-reservation/update-slot-reservation', [], (req, res) => SlotReservationController.updateSlotReservation(req, res)) // 
-router.get('/slot-reservation/get-slot-reservation/:slot_reservation_id/:player_id', [], (req, res) => SlotReservationController.getSlotReservation(req, res)) //
-router.get('/slot-reservation/get-slot-reservations/:slot_reservation_id/:player_id', [], (req, res) => SlotReservationController.getSlotReservations(req, res)) //
+router.get('/slot-reservation/get-slot-reservations/:player_id', [], (req, res) => SlotReservationController.getMySlotReservations(req, res)) //
+//router.get('/slot-reservation/get-slot-reservations/:reservation_id/:player_id', [], (req, res) => SlotReservationController.getSlotReservations(req, res)) //
 router.put('/slot-reservation/replace-admin-player', [], (req, res) => SlotReservationController.replaceAdminPlayer(req, res)) //
-router.delete('/slot-reservation/delete-slot-reservation/:slot_reservation_id', [], (req, res) => SlotReservationController.deleteSlotReservation(req, res)) // 
-
-
-// // Court slot reservation
-// router.post('/slot-reservation/create-slot-reservation', (req, res) => createSlotReservation(req, res)) // done
-
-// // Slot players
-// router.post('/slot-players/respond-to-invitation', (req, res) => respondToInvitation(req, res))
+router.delete('/slot-reservation/delete-slot-reservation/:reservation_id/:player_id', [], (req, res) => SlotReservationController.deleteSlotReservation(req, res)) // 
 
 module.exports = router
