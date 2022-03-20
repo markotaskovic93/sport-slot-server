@@ -92,14 +92,23 @@ router.get('/court/search-court', [], (req, res) => CourtController.searchCourts
 
 
 // Slot Routes
-router.post('/slot/create-slot', [], (req, res) => SlotController.createSlot(req, res)) //
-router.delete('/slot/remove-slot', [], (req, res) => SlotController.removeSlot(req, res)) //
-router.put('/slot/block-slot', [], (req, res) => SlotController.blockSlot(req, res)) //
-router.put('/slot/unblock-slot', [], (req, res) => SlotController.unblockSlot(req, res)) //
-router.get('/slot/get-slot/:slot_id', [], (req, res) => SlotController.getSlot(req, res)) //
-router.get('/slot/get-slots/:court_id', [], (req, res) => SlotController.getSlots(req, res)) //
-router.put('/slot/book-slot', [], (req, res) => SlotController.bookSlotByAdminPlayer(req, res)) //
-router.put('/slot/unbook-slot', [], (req, res) => SlotController.unbookSlotByAdminPlayer(req, res)) //
+
+router.delete('/court-slot/remove-slot', [], (req, res) => SlotController.removeSlot(req, res)) //
+router.put('/court-slot/block-slot', [], (req, res) => SlotController.blockSlot(req, res)) //
+router.put('/court-slot/unblock-slot', [], (req, res) => SlotController.unblockSlot(req, res)) //
+router.get('/court-slot/get-slot/:slot_id', [], (req, res) => SlotController.getSlot(req, res)) //
+router.get('/court-slot/get-slots/:court_id', [], (req, res) => SlotController.getSlots(req, res)) //
+router.put('/court-slot/book-slot', [], (req, res) => SlotController.bookSlotByAdminPlayer(req, res)) //
+router.put('/court-slot/unbook-slot', [], (req, res) => SlotController.unbookSlotByAdminPlayer(req, res)) //
+
+
+router.post('/court-slot/create-slot', [], (req, res) => SlotController.createSlots(req, res)) // radi dodavanje niza slotova za jedan court
+router.get('/court-slot/get-slots/:date/:time/:city/:state/:offset', [], (req, res) => SlotController.findInitialSlots(req, res)) // 
+
+
+router.get('/court-slot/get-slots-count/:date/:time/:city/:state', [], (req, res) => SlotController.getSlotsCount(req, res)) // 
+router.post('/court-slot/find-slots', [], (req, res) => SlotController.findSlots(req, res)) // filtering slots
+
 // ------------------------------------------- End of Slot Routes ------------------------------------------------------ //
 
 

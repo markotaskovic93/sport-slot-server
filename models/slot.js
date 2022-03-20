@@ -1,4 +1,4 @@
-const { Model } = require('sequelize');
+const { Model, Op } = require('sequelize');
 const IDGenerator = require('../helpers/IDGenerator.js')
 
 module.exports = (sequelize, DataTypes) => {
@@ -6,36 +6,36 @@ module.exports = (sequelize, DataTypes) => {
         
         static async storeSlots(data) {
             try {
-                const { court_id, slot_date, slot_start_time, slot_end_time, slot_price, slot_discount } = data
-                const slotId = IDGenerator()
-                return sequelize.transaction((t) => { 
-                    return Slot.create({
-                        id: slotId,
-                        court_id: court_id,
-                        slot_date: slot_date,
-                        slot_start_time: slot_start_time,
-                        slot_end_time: slot_end_time,
-                        slot_price: slot_price,
-                        slot_discount: slot_discount,
-                        slot_paid: false,
-                        slot_booked: slot_booked,
-                        slot_blocked: false
+                let res = ''
+                for(let i = 0; i < data.slots.length; i++) {
+                    let { court_id, slot_date, slot_start_time, slot_end_time, slot_price, slot_discount, slot_city, slot_state } = data.slots[i]
+                    let slotId = IDGenerator()
+                    console.log(data.slots[i])
+                    await sequelize.transaction((t) => { 
+                        return Slot.create({
+                            id: slotId,
+                            court_id: court_id,
+                            slot_date: slot_date,
+                            slot_start_time: slot_start_time,
+                            slot_end_time: slot_end_time,
+                            slot_price: slot_price,
+                            slot_discount: slot_discount,
+                            slot_state: slot_state,
+                            slot_city: slot_city,
+                            slot_has_reservation: true,
+                            slot_reservation_id: '123123',
+                            slot_booked: false,
+                            slot_blocked: false
+                        })
+                    }).then((result) => {// Transaction STARTED
+                        console.log(result)
+                        res = true
+                    }).catch((err) => {// Transaction ROOLBACK
+                        console.log(err)
+                        res = false
                     })
-                }).then((result) => {// Transaction STARTED
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Slot is created",
-                        body: result 
-                    }
-                }).catch((err) => {// Transaction ROOLBACK
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while creating slot",
-                        body: err.errors 
-                    }
-                })
+                }
+                return res
             } catch (error) {
                 return {
                     actionStatus: false,
@@ -290,6 +290,80 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
         
+        static async filterSlots(data) {
+            try {
+                const { date, time, city, state, offset } = data
+                return Slot.findAll({
+                    where: {
+                        slot_date: date,
+                        slot_start_time: time,
+                        slot_city: {
+                            [Op.iLike]: `%${city}%`
+                        },
+                        slot_state: {
+                            [Op.iLike]: `%${state}%`
+                        },
+                        slot_blocked: false,
+                        slot_booked: false
+                    },
+                    raw: true,
+                    attributes: ['id', 'court_id', 'slot_has_reservation', 'slot_price', 'slot_reservation_id', 'slot_start_time', 'slot_end_time', 'slot_date'],
+                    offset: offset,
+                    limit: 8
+                }).then((result) => {
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        message: "Slots",
+                        body: result 
+                    }
+                }).catch((err) => {
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error while booking slot",
+                        body: err.errors 
+                    }
+                }) 
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
+        static async getNumberOfSlots(data) {
+            try {
+                const { date, time, state, city } = data
+                return Slot.count({
+                    where: { 
+                        slot_date: date,
+                        slot_start_time: time,
+                        slot_city: {
+                            [Op.iLike]: `%${city}%`
+                        },
+                        slot_state: {
+                            [Op.iLike]: `%${state}%`
+                        }
+                    }
+                }).then((result) => {
+                    return result
+                })
+                .catch((err) => {
+                    return false
+                }) 
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
 
     };
     Slot.init({
@@ -303,7 +377,10 @@ module.exports = (sequelize, DataTypes) => {
         slot_end_time: DataTypes.STRING,
         slot_price: DataTypes.STRING,
         slot_discount: DataTypes.STRING,
-        slot_paid: DataTypes.BOOLEAN,
+        slot_state: DataTypes.STRING,
+        slot_city: DataTypes.STRING,
+        slot_has_reservation: DataTypes.BOOLEAN,
+        slot_reservation_id: DataTypes.STRING,
         slot_booked: DataTypes.BOOLEAN,
         slot_blocked: DataTypes.BOOLEAN
     }, {

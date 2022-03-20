@@ -30,10 +30,22 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
-      slot_paid: {
+      slot_city: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      slot_state: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      slot_has_reservation: {
         allowNull: false,
         type: Sequelize.BOOLEAN
       },
+      slot_reservation_id: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },  
       slot_booked: {
         allowNull: false,
         type: Sequelize.BOOLEAN

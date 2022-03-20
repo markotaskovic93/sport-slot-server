@@ -1,4 +1,5 @@
 const { Model } = require('sequelize');
+const { Op } = require('sequelize')
 const IDGenerator = require('../helpers/IDGenerator.js')
 
 module.exports = (sequelize, DataTypes) => {
@@ -11,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                     court_enviroment, court_size, court_available_sports, 
                     court_state, court_city, court_street, court_facilities  
                 } = data
+                const courtID = IDGenerator()
                 return sequelize.transaction((t) => { 
                     return Court.create({
                         id: courtID,
@@ -24,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
                         court_city: court_city,
                         court_street: court_street,
                         court_facilities: court_facilities,
+                        court_promoted: false,
                         blocked: false
                     })
                 }).then((result) => {// Transaction STARTED
@@ -101,7 +104,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async getCourtById(data) {
+        static async getCourtById(courtId) {
             try {
                 const { court_id } = data
                 return Court.findOne({
@@ -154,6 +157,39 @@ module.exports = (sequelize, DataTypes) => {
                         actionStatus: false,
                         status: 403,
                         message: "Error while trying to find courts",
+                        body: err.errors 
+                    }
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
+        static async getCourtFilterInfo(courtId) {
+            try {
+                return Court.findOne({
+                    where: {
+                        id: courtId
+                    },
+                    raw: true,
+                    attributes: ['court_name', 'court_street']
+                }).then((result) => {
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        message: "Court",
+                        body: result 
+                    }
+                }).catch((err) => {
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error while trying to find court",
                         body: err.errors 
                     }
                 })
@@ -365,7 +401,6 @@ module.exports = (sequelize, DataTypes) => {
         court_city: DataTypes.STRING,
         court_street: DataTypes.STRING,
         court_facilities: DataTypes.ARRAY(DataTypes.STRING),
-        court_payment_type: DataTypes.STRING,
         court_promoted: DataTypes.BOOLEAN,
         blocked: DataTypes.BOOLEAN
     }, {

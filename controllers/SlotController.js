@@ -1,11 +1,12 @@
 const Slot = require('../models/').Slot
+const Court = require('../models/').Court
 
 class SlotController {
 
     static async createSlots(req, res) {
         try {
             const response = await Slot.storeSlots(req.body)
-            return res.status(response.status).json(response)
+            return res.status(200).json(response)
         } catch (error) {
             return {
                 actionStatus: false,
@@ -58,6 +59,39 @@ class SlotController {
         }
     }
 
+    static async findInitialSlots(req, res) {
+        try {
+            const slots = await Slot.filterSlots(req.params)
+            for(let i = 0; i < slots.body.length; i++) {
+                const courtInfo = await Court.getCourtFilterInfo(slots.body[i].court_id)
+                slots.body[i].court_info = courtInfo.body
+            }
+            return res.status(200).json(slots)
+        } catch (error) {
+            return {
+                actionStatus: false,
+                status: 403,
+                message: "Error rised",
+                body: error 
+            }
+        }
+    }
+
+    static async getSlotsCount(req, res) {
+        try {
+            const response = await Slot.getNumberOfSlots(req.params)
+            return res.status(200).json(response)
+        } catch (error) {
+            return {
+                actionStatus: false,
+                status: 403,
+                message: "Error rised",
+                body: error 
+            }
+        }
+    }
+
+
     static async getSlot(req, res) {
         try {
             const response = await Slot.getSlotById(req.params)
@@ -100,21 +134,6 @@ class SlotController {
         }
     }
 
-    static async bookSlotByAdminPlayer(req, res) {
-        try {
-            const { slot_id } = req.params
-            const response = await Slot.setSlotBooked(slot_id)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
     static async unbookSlot(slotId) {
         try {
             const response = await Slot.unbookSlot(slotId)
@@ -128,23 +147,6 @@ class SlotController {
             }
         }
     }
-
-    static async unbookSlotByAdminPlayer(req, res) {
-        try {
-            const { slot_id } = req.params
-            const response = await Slot.unbookSlot(slot_id)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
-    
 
 }
 
