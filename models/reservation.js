@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         
         static async createReservationForSlot(data) {
             try {
-                const {  } = data
+                const { slot_id, payment_type,  } = data
                 const reservationID = IDGenerator()
                 await sequelize.transaction((t) => { 
                     return Reservation.create({
@@ -30,15 +30,16 @@ module.exports = (sequelize, DataTypes) => {
     };
     Reservation.init({
         id: {
-        primaryKey: true,
-        type: DataTypes.BIGINT
+            primaryKey: true,
+            type: DataTypes.BIGINT
         },
         slot_id: DataTypes.BIGINT,
         admin_player_id: DataTypes.STRING,
         players_needed: DataTypes.STRING,
         players_accepted: DataTypes.STRING,
         can_join: DataTypes.STRING,
-        reservation_type: DataTypes.STRING
+        payment_type: DataTypes.STRING, // this will be 'free' or 'per_person'
+        reservation_type: DataTypes.STRING // this will be 'group' or 'direct'
     }, {
         sequelize,
         modelName: 'Reservation',

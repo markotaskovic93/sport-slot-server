@@ -5,11 +5,19 @@ module.exports = (sequelize, DataTypes) => {
     class Slot extends Model {
         
         // Ostaje 
-        static async storeSlots(data, availableSports) {
+        static async storeSlots(data, availableSports, applayedFee) {
             try {
                 let res = ''
                 for(let i = 0; i < data.slots.length; i++) {
-                    let { court_id, slot_date, slot_start_time, slot_end_time, slot_price, slot_discount, slot_city, slot_state } = data.slots[i]
+                    let { court_id, slot_date, slot_start_time, slot_end_time, slot_base_price, slot_discount, slot_city, slot_state } = data.slots[i]
+                    let calculatedSlotPrice;
+                    let slotPriceAfterDiscount;
+                    if (slot_discount !== null) {
+                        slotPriceAfterDiscount = parseInt(slot_base_price) - ((parseInt(slot_base_price) / 100) * parseInt(slot_discount))
+                        calculatedSlotPrice = slotPriceAfterDiscount + ((slotPriceAfterDiscount / 100) * parseInt(applayedFee))
+                    } else {
+                        calculatedSlotPrice = parseInt(slot_base_price) + ((parseInt(slot_base_price) / 100) * applayedFee)
+                    }
                     let slotId = IDGenerator()
                     await sequelize.transaction((t) => { 
                         return Slot.create({
@@ -18,14 +26,17 @@ module.exports = (sequelize, DataTypes) => {
                             slot_date: slot_date,
                             slot_start_time: slot_start_time,
                             slot_end_time: slot_end_time,
-                            slot_price: slot_price,
+                            slot_base_price: slot_base_price,
+                            slot_price: Math.round(calculatedSlotPrice),
                             slot_discount: slot_discount,
+                            slot_discounted_price: slotPriceAfterDiscount,
                             slot_state: slot_state,
                             slot_city: slot_city,
                             slot_available_sports: availableSports,
-                            slot_has_reservation: false, // temporary only for testing
+                            slot_has_reservation: false,
                             slot_booked: false,
-                            slot_blocked: false
+                            slot_blocked: false,
+                            slot_active: true
                         })
                     }).then((result) => {// Transaction STARTED
                         res = true
@@ -142,7 +153,8 @@ module.exports = (sequelize, DataTypes) => {
                         },
                         slot_has_reservation: hasReservation,
                         slot_blocked: false,
-                        slot_booked: false
+                        slot_booked: false,
+                        slot_active: true
                     }
                 } else {
                     queryParams = {
@@ -155,7 +167,8 @@ module.exports = (sequelize, DataTypes) => {
                             [Op.iLike]: `%${state}%`
                         },
                         slot_blocked: false,
-                        slot_booked: false
+                        slot_booked: false,
+                        slot_active: true
                     }
                 }
 
@@ -216,7 +229,8 @@ module.exports = (sequelize, DataTypes) => {
                         },
                         slot_has_reservation: hasReservation,
                         slot_blocked: false,
-                        slot_booked: false
+                        slot_booked: false,
+                        slot_active: true
                     }
                 } else {
                     queryParams = {
@@ -229,7 +243,8 @@ module.exports = (sequelize, DataTypes) => {
                             [Op.iLike]: `%${state}%`
                         },
                         slot_blocked: false,
-                        slot_booked: false
+                        slot_booked: false,
+                        slot_active: true
                     }
                 }
                 return Slot.count({
@@ -258,7 +273,8 @@ module.exports = (sequelize, DataTypes) => {
                         id: slotID,
                         slot_has_reservation: false,
                         slot_booked: false,
-                        slot_blocked: false
+                        slot_blocked: false,
+                        slot_active: true
                     },
                     raw: true,
                     attributes: ['slot_has_reservation', 'slot_reservation_id']
@@ -284,7 +300,9 @@ module.exports = (sequelize, DataTypes) => {
         slot_date: DataTypes.STRING,
         slot_start_time: DataTypes.STRING,
         slot_end_time: DataTypes.STRING,
+        slot_base_price: DataTypes.STRING,
         slot_price: DataTypes.STRING,
+        slot_discounted_price: DataTypes.STRING,
         slot_discount: DataTypes.STRING,
         slot_state: DataTypes.STRING,
         slot_city: DataTypes.STRING,
@@ -292,7 +310,8 @@ module.exports = (sequelize, DataTypes) => {
         slot_has_reservation: DataTypes.BOOLEAN,
         slot_reservation_id: DataTypes.STRING,
         slot_booked: DataTypes.BOOLEAN,
-        slot_blocked: DataTypes.BOOLEAN
+        slot_blocked: DataTypes.BOOLEAN,
+        slot_active: DataTypes.BOOLEAN
     }, {
         sequelize,
         modelName: 'Slot',

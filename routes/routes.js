@@ -24,6 +24,7 @@ const CourtOwnerPaymentMethodController = require('../controllers/CourtOwnerPaym
 const CourtController = require('../controllers/CourtController.js')
 const SlotController = require('../controllers/SlotController.js')
 const ReservationController = require('../controllers/ReservationController.js')
+const FeeController = require('../controllers/FeeController.js')
 
 
 // Player Routes
@@ -93,9 +94,12 @@ router.get('/court-slot/get-slots-count/:date/:time/:city/:state/:sport?/:bookin
 router.get('/court-slot/get-slots/:date/:time/:city/:state/:sport?/:bookingType?/:offset', [], (req, res) => SlotController.findSlots(req, res)) // filtering slots
 // ------------------------------------------- End of Slot Routes ------------------------------------------------------ //
 
-
+// Reservation routes
 router.post('/reservation/pay-now-reservation', [], (req, res) => ReservationController.createPayNowReservation(req, res)) //
 
+
+// Fees routes
+router.post('/fee/create-fee', [], (req, res) => FeeController.createSlotFee(req, res)) // add fees
 
 
 module.exports = router

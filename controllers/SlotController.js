@@ -1,5 +1,6 @@
 const Slot = require('../models/').Slot
 const Court = require('../models/').Court
+const Fee = require('../models/').Fee
 
 class SlotController {
 
@@ -8,7 +9,8 @@ class SlotController {
             const { court_id } = req.body.slots[0]
             const courtIsAvailable = await Court.courtIsAvailable(court_id)
             if (courtIsAvailable.status) {
-                const response = await Slot.storeSlots(req.body, courtIsAvailable.result.court_available_sports)
+                const applayedFee = await Fee.getSlotFee()
+                const response = await Slot.storeSlots(req.body, courtIsAvailable.result.court_available_sports, applayedFee[0].slot_base_fee)
                 return res.status(200).json(response)
             }
         } catch (error) {

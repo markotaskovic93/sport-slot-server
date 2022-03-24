@@ -26,6 +26,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      slot_base_price: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      slot_discounted_price: {
+        allowNull: true,
+        type: Sequelize.STRING
+      },
       slot_discount: {
         allowNull: true,
         type: Sequelize.STRING
@@ -55,6 +63,10 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       slot_blocked: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+      },
+      slot_active: {
         allowNull: false,
         type: Sequelize.BOOLEAN
       },

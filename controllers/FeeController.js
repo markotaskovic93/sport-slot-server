@@ -2,11 +2,17 @@ const Fee = require('../models/').Fee
 
 class FeeController {
 
-    static async createSlotFee (req, res) {
+    static async createSlotFee(req, res) {
         try {
-            
+            const response = await Fee.storeFees(req.body)
+            return res.status(response.status).json(response)
         } catch (error) {
-            res.status(500).json(error)
+            return {
+                actionStatus: false,
+                status: 403,
+                message: "Error rised",
+                body: error 
+            }
         }
     }
 
