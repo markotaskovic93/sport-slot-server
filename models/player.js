@@ -39,11 +39,6 @@ module.exports = (sequelize, DataTypes) => {
         }
     
         static async storePlayerData(data) {
-            // moneySpent - ok -> ovo ce da se vadi iz tabele player_payment_transaction
-            // gamesPlayed - ok -> 
-            // paymentDetails - ok -> reseno
-            // ratings - ok -> 
-            // notificationSettings - ok -> reseno
             try {
                 const { 
                     full_name, birthday, height, email, 
@@ -67,7 +62,8 @@ module.exports = (sequelize, DataTypes) => {
                         phone: phone,
                         password: hashedPassword,
                         bio: bio,
-                        sport: sport,
+                        prefered_sport: sport,
+                        balance: 0,
                         email_verified: false,
                         phone_verified: false,
                         terms_conditions: terms,
@@ -125,7 +121,7 @@ module.exports = (sequelize, DataTypes) => {
                             age: age,
                             phone: phone,
                             bio: bio,
-                            sport: sport,
+                            prefered_sport: sport,
                             terms_conditions: terms,
                         }, {
                             where: {
@@ -464,7 +460,8 @@ module.exports = (sequelize, DataTypes) => {
         phone: DataTypes.STRING,
         password: DataTypes.STRING,
         bio: DataTypes.TEXT,
-        sport: DataTypes.STRING,
+        prefered_sport: DataTypes.STRING,
+        balance: DataTypes.INTEGER,
         email_verified: DataTypes.BOOLEAN,
         phone_verified: DataTypes.BOOLEAN,
         terms_conditions: DataTypes.BOOLEAN,

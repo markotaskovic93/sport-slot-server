@@ -4,13 +4,13 @@ const IDGenerator = require('../helpers/IDGenerator.js')
 module.exports = (sequelize, DataTypes) => {
     class Slot extends Model {
         
-        static async storeSlots(data) {
+        // Ostaje 
+        static async storeSlots(data, availableSports) {
             try {
                 let res = ''
                 for(let i = 0; i < data.slots.length; i++) {
                     let { court_id, slot_date, slot_start_time, slot_end_time, slot_price, slot_discount, slot_city, slot_state } = data.slots[i]
                     let slotId = IDGenerator()
-                    console.log(data.slots[i])
                     await sequelize.transaction((t) => { 
                         return Slot.create({
                             id: slotId,
@@ -22,16 +22,14 @@ module.exports = (sequelize, DataTypes) => {
                             slot_discount: slot_discount,
                             slot_state: slot_state,
                             slot_city: slot_city,
-                            slot_has_reservation: true,
-                            slot_reservation_id: '123123',
+                            slot_available_sports: availableSports,
+                            slot_has_reservation: false, // temporary only for testing
                             slot_booked: false,
                             slot_blocked: false
                         })
                     }).then((result) => {// Transaction STARTED
-                        console.log(result)
                         res = true
                     }).catch((err) => {// Transaction ROOLBACK
-                        console.log(err)
                         res = false
                     })
                 }
@@ -46,181 +44,8 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async removeSlotByCourt(data) {
-            try {
-                const { slot_id, court_id } = data
-                return sequelize.transaction((t) => { 
-                    return Slot.destroy({
-                        where: {
-                            id: slot_id,
-                            court_id: court_id
-                        }
-                    })
-                }).then((result) => {// Transaction STARTED
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Slot is removed",
-                        body: result 
-                    }
-                }).catch((err) => {// Transaction ROOLBACK
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while removing slot",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-            
-        }
-
-        static async blockSlotByCourt(data) {
-            try {
-                const { slot_id, court_id } = data
-                return sequelize.transaction((t) => { 
-                    return Slot.update({
-                        slot_blocked: true
-                    },{
-                        where: {
-                            id: slot_id,
-                            court_id: court_id
-                        }
-                    })
-                }).then((result) => {// Transaction STARTED
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Slot is blocked",
-                        body: result 
-                    }
-                }).catch((err) => {// Transaction ROOLBACK
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while blocking slot",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async unblockSlotByCourt(data) {
-            try {
-                const { slot_id, court_id } = data
-                return sequelize.transaction((t) => { 
-                    return Slot.update({
-                        slot_blocked: false
-                    },{
-                        where: {
-                            id: slot_id,
-                            court_id: court_id
-                        }
-                    })
-                }).then((result) => {// Transaction STARTED
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Slot is unblocked",
-                        body: result 
-                    }
-                }).catch((err) => {// Transaction ROOLBACK
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while unblocking slot",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async getSlotById(data) {
-            try {
-                const { slot_id } = data
-                return Slot.findOne({
-                    where: {
-                        id: slot_id
-                    }
-                }).then((result) => {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Slot",
-                        body: result 
-                    }
-                }).catch((err) => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while finding slot slot",
-                        body: err.errors 
-                    }
-                })  
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async getSlotsByCourt(data) {
-            try {
-                const { court_id } = data
-                return Slot.findAll({
-                    where: {
-                        court_id: court_id
-                    }
-                }).then((result) => {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Slots",
-                        body: result 
-                    }
-                }).catch((err) => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while finding slot slots",
-                        body: err.errors 
-                    }
-                })  
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async setSlotBooked(slot_id) {
+        // Ostaje
+        static async bookSlot(slot_id) {
             try {
                 return sequelize.transaction((t) => { 
                     return Slot.update({
@@ -255,6 +80,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        // Ostaje
         static async unbookSlot(slot_id) {
             try {
                 return sequelize.transaction((t) => { 
@@ -290,11 +116,36 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
         
+        // Ostaje
         static async filterSlots(data) {
             try {
-                const { date, time, city, state, offset } = data
-                return Slot.findAll({
-                    where: {
+                const { date, time, city, state, offset, sport, bookingType } = data
+                let hasReservation
+                if (bookingType === 'available') {
+                    hasReservation = false
+                } else {
+                    hasReservation = true
+                }
+                let queryParams
+                if (sport !== '' && bookingType !== '') {
+                    queryParams = {
+                        slot_date: date,
+                        slot_start_time: time,
+                        slot_city: {
+                            [Op.iLike]: `%${city}%`
+                        },
+                        slot_state: {
+                            [Op.iLike]: `%${state}%`
+                        },
+                        slot_available_sports: { 
+                            [Op.contains]: [sport] 
+                        },
+                        slot_has_reservation: hasReservation,
+                        slot_blocked: false,
+                        slot_booked: false
+                    }
+                } else {
+                    queryParams = {
                         slot_date: date,
                         slot_start_time: time,
                         slot_city: {
@@ -305,7 +156,11 @@ module.exports = (sequelize, DataTypes) => {
                         },
                         slot_blocked: false,
                         slot_booked: false
-                    },
+                    }
+                }
+
+                return Slot.findAll({
+                    where: queryParams,
                     raw: true,
                     attributes: ['id', 'court_id', 'slot_has_reservation', 'slot_price', 'slot_reservation_id', 'slot_start_time', 'slot_end_time', 'slot_date'],
                     offset: offset,
@@ -335,11 +190,19 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        // Ostaje
         static async getNumberOfSlots(data) {
             try {
-                const { date, time, state, city } = data
-                return Slot.count({
-                    where: { 
+                const { date, time, state, city, bookingType, sport } = data
+                let hasReservation
+                if (bookingType === 'available') {
+                    hasReservation = false
+                } else {
+                    hasReservation = true
+                }
+                let queryParams
+                if (sport !== '' && bookingType !== '') {
+                    queryParams = {
                         slot_date: date,
                         slot_start_time: time,
                         slot_city: {
@@ -347,8 +210,30 @@ module.exports = (sequelize, DataTypes) => {
                         },
                         slot_state: {
                             [Op.iLike]: `%${state}%`
-                        }
+                        },
+                        slot_available_sports: { 
+                            [Op.contains]: [sport] 
+                        },
+                        slot_has_reservation: hasReservation,
+                        slot_blocked: false,
+                        slot_booked: false
                     }
+                } else {
+                    queryParams = {
+                        slot_date: date,
+                        slot_start_time: time,
+                        slot_city: {
+                            [Op.iLike]: `%${city}%`
+                        },
+                        slot_state: {
+                            [Op.iLike]: `%${state}%`
+                        },
+                        slot_blocked: false,
+                        slot_booked: false
+                    }
+                }
+                return Slot.count({
+                    where: queryParams
                 }).then((result) => {
                     return result
                 })
@@ -361,6 +246,30 @@ module.exports = (sequelize, DataTypes) => {
                     status: 500,
                     message: "Server error",
                     body: error
+                }
+            }
+        }
+
+        // Ostaje
+        static async slotInfo(slotID) {
+            try {
+                return Slot.findOne({
+                    where: {
+                        id: slotID,
+                        slot_has_reservation: false,
+                        slot_booked: false,
+                        slot_blocked: false
+                    },
+                    raw: true,
+                    attributes: ['slot_has_reservation', 'slot_reservation_id']
+                }).then(result => {
+                    return result ? { active: true, result } : { active: false }
+                }).catch(err => {
+                    return { active: false }
+                })
+            } catch (error) {
+                return {
+                    message: "Error while checking slot availability"
                 }
             }
         }
@@ -379,6 +288,7 @@ module.exports = (sequelize, DataTypes) => {
         slot_discount: DataTypes.STRING,
         slot_state: DataTypes.STRING,
         slot_city: DataTypes.STRING,
+        slot_available_sports: DataTypes.ARRAY(DataTypes.STRING),
         slot_has_reservation: DataTypes.BOOLEAN,
         slot_reservation_id: DataTypes.STRING,
         slot_booked: DataTypes.BOOLEAN,

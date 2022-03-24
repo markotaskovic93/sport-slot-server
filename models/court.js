@@ -5,6 +5,7 @@ const IDGenerator = require('../helpers/IDGenerator.js')
 module.exports = (sequelize, DataTypes) => {
     class Court extends Model {
         
+        // Ostaje
         static async storeCourtData(data) {
             try {
                 const { 
@@ -55,6 +56,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        // Ostaje
         static async updateCourtData(data) {
             try {
                 const { 
@@ -104,28 +106,20 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async getCourtById(courtId) {
+        // Ostaje
+        static async courtIsAvailable(courtID) {
             try {
-                const { court_id } = data
                 return Court.findOne({
                     where: {
-                        id: court_id
+                        id: courtID,
+                        blocked: false
                     },
-                    raw: true
-                }).then((result) => {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Court",
-                        body: result 
-                    }
-                }).catch((err) => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while trying to find court",
-                        body: err.errors 
-                    }
+                    raw: true,
+                    attributes: ['court_available_sports']
+                }).then(result => {
+                    return result ? { status: true, result } : { status: false }
+                }).catch(err => {
+                    return err
                 })
             } catch (error) {
                 return {
@@ -137,40 +131,8 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async getCourtByCountOwner(data) {
-            try {
-                const { court_owner_id } = data
-                return Court.findAll({
-                    where: {
-                        court_owner_id: court_owner_id
-                    },
-                    raw: true
-                }).then((result) => {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Courts",
-                        body: result 
-                    }
-                }).catch((err) => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while trying to find courts",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async getCourtFilterInfo(courtId) {
+        // Ostaje
+        static async getCourtInfo(courtId) {
             try {
                 return Court.findOne({
                     where: {
@@ -203,186 +165,6 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
-        static async deleteCourtByCourtOwner(data) {
-            try {
-                const { court_owner_id, court_id } = data
-                return sequelize.transaction((t) => { 
-                    return Court.destroy({
-                        where: {
-                            id: court_id,
-                            court_owner_id: court_owner_id
-                        }
-                    })
-                }).then((result) => {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Court deleted",
-                        body: result 
-                    }
-                }).catch((err) => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while trying to delete court",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async blockCourtByCourtOwner(data) {
-            try {
-                const { court_id, court_owner_id } = data
-                return sequelize.transaction((t) => { 
-                    return Court.update({
-                        blocked: true
-                    }, {
-                        where: {
-                            court_id: court_id,
-                            court_owner_id: court_owner_id
-                        }
-                    })
-                }).then((result) => {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Court blocked",
-                        body: result 
-                    }
-                }).catch((err) => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while trying to block court",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async unblockCourtByCourtOwner(data) {
-            try {
-                const { court_id, court_owner_id } = data
-                return sequelize.transaction((t) => { 
-                    return Court.update({
-                        blocked: false
-                    }, {
-                        where: {
-                            court_id: court_id,
-                            court_owner_id: court_owner_id
-                        }
-                    })
-                }).then((result) => {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Court unblocked",
-                        body: result 
-                    }
-                }).catch((err) => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while trying to unblock court",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async promoteCourt(data) {
-            try {
-                const { court_id } = data
-                return sequelize.transaction((t) => { 
-                    return Court.update({
-                        court_promoted: true
-                    }, {
-                        where: {
-                            court_id: court_id
-                        }
-                    })
-                }).then((result) => {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Added promotions to court",
-                        body: result 
-                    }
-                }).catch((err) => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while trying to add promotions to court",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
-
-        static async removeCourtPromotion(data) {
-            try {
-                const { court_id } = data
-                return sequelize.transaction((t) => { 
-                    return Court.update({
-                        court_promoted: false
-                    }, {
-                        where: {
-                            court_id: court_id
-                        }
-                    })
-                }).then((result) => {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Removed court promotion",
-                        body: result 
-                    }
-                }).catch((err) => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error while trying to remove court promotion",
-                        body: err.errors 
-                    }
-                })
-            } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
-            }
-        }
 
     };
     Court.init({

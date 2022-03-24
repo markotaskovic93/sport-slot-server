@@ -39,12 +39,16 @@ module.exports = {
         type: Sequelize.STRING
       },
       slot_has_reservation: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.BOOLEAN
       },
       slot_reservation_id: {
         allowNull: true,
         type: Sequelize.STRING
+      },
+      slot_available_sports: {
+        allowNull: false,
+        type: Sequelize.ARRAY(Sequelize.STRING)
       },  
       slot_booked: {
         allowNull: false,

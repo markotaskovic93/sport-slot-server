@@ -5,75 +5,27 @@ class SlotController {
 
     static async createSlots(req, res) {
         try {
-            const response = await Slot.storeSlots(req.body)
-            return res.status(200).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
+            const { court_id } = req.body.slots[0]
+            const courtIsAvailable = await Court.courtIsAvailable(court_id)
+            if (courtIsAvailable.status) {
+                const response = await Slot.storeSlots(req.body, courtIsAvailable.result.court_available_sports)
+                return res.status(200).json(response)
             }
+        } catch (error) {
+            return req.status(500).json(error)
         }
     }
 
-    static async removeSlot(req, res) {
-        try {
-            const response = await Slot.removeSlotByCourt(req.params)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
-    static async blockSlot(req, res) {
-        try {
-            const response = await Slot.blockSlotByCourt(req.body)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
-    static async unblockSlot(req, res) {
-        try {
-            const response = await Slot.unblockSlotByCourt(req.body)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
-    static async findInitialSlots(req, res) {
+    static async findSlots(req, res) {
         try {
             const slots = await Slot.filterSlots(req.params)
             for(let i = 0; i < slots.body.length; i++) {
-                const courtInfo = await Court.getCourtFilterInfo(slots.body[i].court_id)
+                const courtInfo = await Court.getCourtInfo(slots.body[i].court_id)
                 slots.body[i].court_info = courtInfo.body
             }
             return res.status(200).json(slots)
         } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
+            return req.status(500).json(error)
         }
     }
 
@@ -82,69 +34,27 @@ class SlotController {
             const response = await Slot.getNumberOfSlots(req.params)
             return res.status(200).json(response)
         } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
+            return req.status(500).json(error)
         }
     }
 
-
-    static async getSlot(req, res) {
-        try {
-            const response = await Slot.getSlotById(req.params)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
-    static async getSlots(req, res) {
-        try {
-            const response = await Slot.getSlotsByCourt(req.params)
-            return res.status(response.status).json(response)
-        } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
-        }
-    }
-
+    // Ostaje
     static async bookSlot(slotId) {
         try {
-            const response = await Slot.setSlotBooked(slotId)
+            const response = await Slot.bookSlot(slotId)
             return res.status(response.status).json(response)
         } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
+            return req.status(500).json(error)
         }
     }
 
+    // Ostaje
     static async unbookSlot(slotId) {
         try {
             const response = await Slot.unbookSlot(slotId)
             return res.status(response.status).json(response)
         } catch (error) {
-            return {
-                actionStatus: false,
-                status: 403,
-                message: "Error rised",
-                body: error 
-            }
+            return req.status(500).json(error)
         }
     }
 

@@ -124,20 +124,6 @@ CREATE TABLE IF NOT EXISTS public."Player_payment_methods"
     CONSTRAINT "Player_payment_methods_card_number_key" UNIQUE (card_number)
 );
 
-CREATE TABLE IF NOT EXISTS public."Slot_reservations"
-(
-    id bigint NOT NULL,
-    slot_id bigint NOT NULL,
-    admin_player_id bigint NOT NULL,
-    players_needed character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    players_accepted character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    reservation_status character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    payment_type character varying(255) COLLATE pg_catalog."default" NOT NULL,
-    "createdAt" timestamp with time zone NOT NULL,
-    "updatedAt" timestamp with time zone NOT NULL,
-    CONSTRAINT "Slot_reservations_pkey" PRIMARY KEY (id)
-);
-
 CREATE TABLE IF NOT EXISTS public."Slots"
 (
     id bigint NOT NULL,

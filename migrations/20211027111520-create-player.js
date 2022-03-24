@@ -54,9 +54,13 @@ module.exports = {
         allowNull: true,
         type: Sequelize.TEXT
       },
-      sport: {
+      prefered_sport: {
         allowNull: false,
         type: Sequelize.STRING
+      },
+      balance: {
+        allowNull: false,
+        type: Sequelize.INTEGER
       },
       email_verified: {
         allowNull: false,
