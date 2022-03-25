@@ -112,6 +112,15 @@ class PlayerController {
         return res.status(response.status).json(response)
     }
 
+    static async updateBalance(req, res) {
+        try {
+            const response = await Player.updatePlayerBalance(req.body)
+            return res.status(response.status).json(response)
+        } catch (error) {
+            return res.status(500).json(error)
+        }
+    }
+
 }
 
 module.exports = PlayerController

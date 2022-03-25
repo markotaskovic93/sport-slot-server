@@ -11,7 +11,7 @@ module.exports = {
         type: Sequelize.BIGINT
       },
       admin_player_id: {
-        allowNull:false,
+        allowNull: false,
         type: Sequelize.STRING
       },
       players_needed: {
@@ -22,12 +22,16 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      can_join: {
+      sport: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      reservation_type: { // This can be 'direct' or 'group'
+      is_paid: {
         allowNull: false,
+        type: Sequelize.BOOLEAN
+      },
+      price_per_person: {
+        allowNull: true,
         type: Sequelize.STRING
       },
       createdAt: {

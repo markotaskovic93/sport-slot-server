@@ -56,11 +56,14 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         // Ostaje
-        static async bookSlot(slot_id) {
+        static async bookSlot(slot_id, slot_reservation_id) {
             try {
                 return sequelize.transaction((t) => { 
                     return Slot.update({
-                        slot_booked: true
+                        slot_booked: true,
+                        slot_has_reservation: true,
+                        slot_reservation_id: slot_reservation_id,
+                        slot_active: false
                     }, {
                         where: {
                             id: slot_id
@@ -271,13 +274,12 @@ module.exports = (sequelize, DataTypes) => {
                 return Slot.findOne({
                     where: {
                         id: slotID,
-                        slot_has_reservation: false,
                         slot_booked: false,
                         slot_blocked: false,
                         slot_active: true
                     },
                     raw: true,
-                    attributes: ['slot_has_reservation', 'slot_reservation_id']
+                    attributes: ['slot_has_reservation', 'slot_reservation_id', 'slot_price']
                 }).then(result => {
                     return result ? { active: true, result } : { active: false }
                 }).catch(err => {

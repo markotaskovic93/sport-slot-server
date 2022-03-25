@@ -6,16 +6,32 @@ module.exports = (sequelize, DataTypes) => {
         
         static async createReservationForSlot(data) {
             try {
-                const { slot_id, payment_type,  } = data
+                const { admin_player_id, slot_id, sport, players_needed, players_accepted } = data
                 const reservationID = IDGenerator()
-                await sequelize.transaction((t) => { 
-                    return Reservation.create({
-                        id: reservationID,
-                    })
+                return Reservation.create({
+                    id: reservationID,
+                    slot_id: slot_id,
+                    admin_player_id: admin_player_id,
+                    sport: sport,
+                    players_needed: players_needed,
+                    players_accepted: players_accepted,
+                    is_paid: false
+                }, {
+                    raw: true
                 }).then((result) => {// Transaction STARTED
-                    return true
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        message: "Reservation created",
+                        body: result
+                    }
                 }).catch((err) => {// Transaction ROOLBACK
-                    return false
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error while creating reservation",
+                        body: err
+                    }
                 })
             } catch (error) {
                 return {
@@ -37,9 +53,9 @@ module.exports = (sequelize, DataTypes) => {
         admin_player_id: DataTypes.STRING,
         players_needed: DataTypes.STRING,
         players_accepted: DataTypes.STRING,
-        can_join: DataTypes.STRING,
-        payment_type: DataTypes.STRING, // this will be 'free' or 'per_person'
-        reservation_type: DataTypes.STRING // this will be 'group' or 'direct'
+        sport: DataTypes.STRING,
+        is_paid: DataTypes.BOOLEAN,
+        price_per_person: DataTypes.STRING
     }, {
         sequelize,
         modelName: 'Reservation',

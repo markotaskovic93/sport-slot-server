@@ -402,7 +402,10 @@ module.exports = (sequelize, DataTypes) => {
 
         static async updateNotification(data) {
             try {
-                const { player_id, notification_invites, notification_messages, notification_reminders, notification_promotions } = data
+                const { 
+                    player_id, notification_invites, notification_messages, 
+                    notification_reminders, notification_promotions 
+                } = data
                 return sequelize.transaction((t) => { 
                     return Player.update({
                         notification_invites: notification_invites,
@@ -415,7 +418,6 @@ module.exports = (sequelize, DataTypes) => {
                         }
                     })
                 }).then((result) => { // Transaction STARTED
-                    console.log(result)
                     return {
                         actionStatus: result[0] === 1 ? true : false,
                         status: 200,
@@ -427,6 +429,42 @@ module.exports = (sequelize, DataTypes) => {
                         actionStatus: false,
                         status: 403,
                         message: "Can't update notifications",
+                        body: err 
+                    }
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
+        static async updatePlayerBalance(data) {
+            try {
+                const { player_id, balance } = data
+                return sequelize.transaction((t) => { 
+                    return Player.update({
+                        balance: balance
+                    }, {
+                        where: {
+                            id: player_id
+                        }
+                    })
+                }).then(result => {
+                    return {
+                        actionStatus: result[0] === 1 ? true : false,
+                        status: result[0] === 1 ? 200 : 403,
+                        message: result[0] === 1 ? "Updated balance" : "Can't update balance",
+                        body: result 
+                    }
+                }).catch(err => {
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error rised while updating balance",
                         body: err 
                     }
                 })

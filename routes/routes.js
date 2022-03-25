@@ -39,6 +39,10 @@ router.get('/player/block-player-account/:playerId', [], (req, res) => PlayerCon
 router.get('/player/unblock-player-account/:playerId', [], (req, res) => PlayerController.unblockPlayerAccount(req, res)) // done
 router.post('/player/reset-password', [], (req, res) => PlayerController.resetPlayerAccountPassword(req, res)) // done
 router.put('/player/notification-settings', [], (req, res) => PlayerController.updateNotificationSettings(req, res)) // 
+
+
+
+router.put('/player/update-balance', [], (req, res) => PlayerController.updateBalance(req, res)) //
 // --------------------------------------- END OF Player Routes ------------------------------------------- //
 
 
