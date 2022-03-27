@@ -189,6 +189,29 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async getBalance(playerID) {
+            try {
+                return Player.findOne({
+                    where: {
+                        id: playerID
+                    },
+                    raw: true,
+                    attributes: ['balance']
+                }).then(result => {
+                    return result.balance
+                }).catch(() => {
+                    return false
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                } 
+            }
+        }
+
         static async deletePlayer(id) {
             try {
                 return sequelize.transaction((t) => {

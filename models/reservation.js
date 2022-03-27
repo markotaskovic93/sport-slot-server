@@ -6,16 +6,17 @@ module.exports = (sequelize, DataTypes) => {
         
         static async createReservationForSlot(data) {
             try {
-                const { admin_player_id, slot_id, sport, players_needed, players_accepted } = data
+                const { player_id, slot_id, sport, reservation_type, players_needed, price_per_person } = data
                 const reservationID = IDGenerator()
                 return Reservation.create({
                     id: reservationID,
                     slot_id: slot_id,
-                    admin_player_id: admin_player_id,
+                    admin_player_id: player_id,
                     sport: sport,
                     players_needed: players_needed,
-                    players_accepted: players_accepted,
-                    is_paid: false
+                    players_accepted: 1,
+                    reservation_type: reservation_type,
+                    price_per_person: price_per_person
                 }, {
                     raw: true
                 }).then((result) => {// Transaction STARTED
@@ -43,6 +44,52 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async getSlotReservation(slotID) {
+            try {
+                return Reservation.findOne({
+                    where: {
+                        slot_id: slotID
+                    },
+                    raw: true,
+                    attributes: ['players_needed', 'players_accepted', 'sport', 'reservation_type', 'price_per_person']
+                }).then(result => {
+                    return result ? result : null
+                }).catch(() => {
+                    return null
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
+        static async removeReservation(reservationID) {
+            try {
+                await sequelize.transaction((t) => {
+                    return Reservation.destroy({
+                        where: {
+                            id: reservationID
+                        }
+                    })
+                }).then(result => {
+                    return result === 1 ? true : false
+                }).catch(() => {
+                    return false
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
     };
     Reservation.init({
         id: {
@@ -54,7 +101,7 @@ module.exports = (sequelize, DataTypes) => {
         players_needed: DataTypes.STRING,
         players_accepted: DataTypes.STRING,
         sport: DataTypes.STRING,
-        is_paid: DataTypes.BOOLEAN,
+        reservation_type: DataTypes.STRING,
         price_per_person: DataTypes.STRING
     }, {
         sequelize,

@@ -1,6 +1,7 @@
 const Slot = require('../models/').Slot
 const Court = require('../models/').Court
 const Fee = require('../models/').Fee
+const Reservation = require('../models/').Reservation
 
 class SlotController {
 
@@ -21,9 +22,16 @@ class SlotController {
     static async findSlots(req, res) {
         try {
             const slots = await Slot.filterSlots(req.params)
+            console.log(slots)
             for(let i = 0; i < slots.body.length; i++) {
                 const courtInfo = await Court.getCourtInfo(slots.body[i].court_id)
                 slots.body[i].court_info = courtInfo.body
+                if (slots.body[i].slot_has_reservation) {
+                    const slotReservation = await Reservation.getSlotReservation(slots.body[i].id)
+                    slots.body[i].reservation = slotReservation
+                } else {
+                    slots.body[i].reservation = null
+                }
             }
             return res.status(200).json(slots)
         } catch (error) {

@@ -1,37 +1,24 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Reservations', {
+    await queryInterface.createTable('Players_transactions_histories', {
       id: {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      slot_id: {
-        allowNull: false,
+      player_id: {
         type: Sequelize.BIGINT
       },
-      admin_player_id: {
-        allowNull: false,
+      transaction_type: {
         type: Sequelize.STRING
       },
-      players_needed: {
-        allowNull: false,
+      transaction_desc: {
         type: Sequelize.STRING
       },
-      players_accepted: {
-        allowNull: false,
+      transaction_time: {
         type: Sequelize.STRING
       },
-      sport: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      reservation_type: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      price_per_person: {
-        allowNull: false,
+      transaction_amount: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -45,6 +32,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Reservations');
+    await queryInterface.dropTable('Players_transactions_histories');
   }
 };

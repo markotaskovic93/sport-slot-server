@@ -39,9 +39,6 @@ router.get('/player/block-player-account/:playerId', [], (req, res) => PlayerCon
 router.get('/player/unblock-player-account/:playerId', [], (req, res) => PlayerController.unblockPlayerAccount(req, res)) // done
 router.post('/player/reset-password', [], (req, res) => PlayerController.resetPlayerAccountPassword(req, res)) // done
 router.put('/player/notification-settings', [], (req, res) => PlayerController.updateNotificationSettings(req, res)) // 
-
-
-
 router.put('/player/update-balance', [], (req, res) => PlayerController.updateBalance(req, res)) //
 // --------------------------------------- END OF Player Routes ------------------------------------------- //
 
@@ -80,30 +77,20 @@ router.delete('/court-owner/delete-payment-method/:methodId', [], (req, res) => 
 
 
 
-
-
-
-
 // Court Routes
 router.post('/court/create-court', [], (req, res) => CourtController.createCourt(req, res)) //
 router.put('/court/update-court', [], (req, res) => CourtController.updateCourtData(req, res)) // 
 router.get('/court/get-court/:court_id', [], (req, res) => CourtController.getCourt(req, res)) //
-// ------------------------------------------ End Of Court Routes ------------------------------------------------------ //
-
-
 
 // Slot routes
 router.post('/court-slot/create-slot', [], (req, res) => SlotController.createSlots(req, res)) // radi dodavanje niza slotova za jedan court
 router.get('/court-slot/get-slots-count/:date/:time/:city/:state/:sport?/:bookingType?', [], (req, res) => SlotController.getSlotsCount(req, res)) // sredjeno
 router.get('/court-slot/get-slots/:date/:time/:city/:state/:sport?/:bookingType?/:offset', [], (req, res) => SlotController.findSlots(req, res)) // filtering slots
-// ------------------------------------------- End of Slot Routes ------------------------------------------------------ //
 
 // Reservation routes
-router.post('/reservation/pay-now-reservation', [], (req, res) => ReservationController.createPayNowReservation(req, res)) //
-
+router.post('/reservation/pay-now-reservation', [], (req, res) => ReservationController.createSlotReservation(req, res)) // create pay now reservation
 
 // Fees routes
 router.post('/fee/create-fee', [], (req, res) => FeeController.createSlotFee(req, res)) // add fees
-
 
 module.exports = router

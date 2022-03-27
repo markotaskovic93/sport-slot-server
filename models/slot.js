@@ -56,14 +56,14 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         // Ostaje
-        static async bookSlot(slot_id, slot_reservation_id) {
+        static async directBookSlot(slot_id) {
             try {
                 return sequelize.transaction((t) => { 
                     return Slot.update({
                         slot_booked: true,
-                        slot_has_reservation: true,
-                        slot_reservation_id: slot_reservation_id,
-                        slot_active: false
+                        slot_active: false,
+                        slot_has_reservation: false,
+                        slot_reservation_id: null
                     }, {
                         where: {
                             id: slot_id
@@ -81,6 +81,44 @@ module.exports = (sequelize, DataTypes) => {
                         actionStatus: false,
                         status: 403,
                         message: "Error while booking slot",
+                        body: err.errors 
+                    }
+                }) 
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error",
+                    body: error
+                }
+            }
+        }
+
+        static async groupBookSlot(slot_id, slot_reservation_id) {
+            try {
+                return sequelize.transaction((t) => { 
+                    return Slot.update({
+                        slot_booked: false,
+                        slot_has_reservation: true,
+                        slot_reservation_id: slot_reservation_id,
+                        slot_active: true
+                    }, {
+                        where: {
+                            id: slot_id
+                        }
+                    })
+                }).then((result) => {
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        message: "Group reservation created",
+                        body: result 
+                    }
+                }).catch((err) => {
+                    return {
+                        actionStatus: false,
+                        status: 403,
+                        message: "Error while creating group reservation",
                         body: err.errors 
                     }
                 }) 
@@ -174,7 +212,6 @@ module.exports = (sequelize, DataTypes) => {
                         slot_active: true
                     }
                 }
-
                 return Slot.findAll({
                     where: queryParams,
                     raw: true,
@@ -254,8 +291,7 @@ module.exports = (sequelize, DataTypes) => {
                     where: queryParams
                 }).then((result) => {
                     return result
-                })
-                .catch((err) => {
+                }).catch((err) => {
                     return false
                 }) 
             } catch (error) {
