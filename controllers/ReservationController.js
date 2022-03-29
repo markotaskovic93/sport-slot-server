@@ -32,7 +32,7 @@ class ReservationController {
                     req.body.price_per_person = 0
                 } else {
                     reservationPrice = parseInt(slot.result.slot_price) / parseInt(players_needed)
-                    req.body.price_per_person = reservationPrice
+                    req.body.price_per_person = reservationPrice.toFixed()
                 }
 
                 if (playerBalance >= reservationPrice) {
@@ -41,7 +41,6 @@ class ReservationController {
                     const reservation = await Reservation.createReservationForSlot(req.body)
                     if (reservation.actionStatus) {
                         
-                        // Step 3.
                         const playerInvitation = await PlayersInvitation.storePlayersInvitataion(slot_id, reservation.body.id, players)
 
                         // Step 4.
@@ -64,13 +63,12 @@ class ReservationController {
                                     
                                     // Step 6. 
                                     const bookSlot = await Slot.directBookSlot(slot_id)
-
                                     if (bookSlot.actionStatus) {
                                         // Step 7.
                                         if (slot.result.slot_has_reservation) {
                                             const removePreviousReservation = await Reservation.removeReservation(slot.result.slot_reservation_id)
                                             if (removePreviousReservation) {
-                                                
+                                        
                                                 //const removeReservationPlayers = await 
                                             }
                                         } 

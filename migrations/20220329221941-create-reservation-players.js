@@ -1,26 +1,16 @@
+'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Slot_players', {
+    await queryInterface.createTable('Reservation_players', {
       id: {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      slot_reservation_id: {
-        allowNull: false,
+      reservation_id: {
         type: Sequelize.BIGINT
       },
       player_id: {
-        allowNull: false,
         type: Sequelize.BIGINT
-      },
-      invitation_status: {
-        type: Sequelize.BOOLEAN
-      },
-      invitation_responded: {
-        type: Sequelize.BOOLEAN
-      },
-      price: {
-        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -33,6 +23,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Slot_players');
+    await queryInterface.dropTable('Reservation_players');
   }
 };

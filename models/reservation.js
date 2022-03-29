@@ -16,9 +16,8 @@ module.exports = (sequelize, DataTypes) => {
                     players_needed: players_needed,
                     players_accepted: 1,
                     reservation_type: reservation_type,
-                    price_per_person: price_per_person
-                }, {
-                    raw: true
+                    price_per_person: price_per_person,
+                    is_active: true
                 }).then((result) => {// Transaction STARTED
                     return {
                         actionStatus: true,
@@ -67,6 +66,45 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async getReservationIfActive(reservationID) {
+            try {
+                return Reservation.findOne({
+                    where: {
+                        id: reservationID,
+                        is_active: true
+                    },
+                    raw: true,
+                    attributes: ['players_needed', 'players_accepted', 'reservation_type', 'price_per_person']
+                }).then(result => {
+                    return result ? result : null
+                }).catch(() => {
+                    return null
+                })
+            } catch (error) {
+                return null
+            }
+        }
+
+        static async updatePlayersAccepted(reservation_id, value) {
+            try {
+                await sequelize.transaction((t) => {
+                    return Reservation.update({
+                        players_accepted: value
+                    }, {
+                        where: {
+                            id: reservation_id
+                        }
+                    })
+                }).then(result => {
+                    return result === 1 ? true : false
+                }).catch(() => {
+                    return false
+                })  
+            } catch (error) {
+                return error
+            }
+        }
+
         static async removeReservation(reservationID) {
             try {
                 await sequelize.transaction((t) => {
@@ -102,7 +140,8 @@ module.exports = (sequelize, DataTypes) => {
         players_accepted: DataTypes.STRING,
         sport: DataTypes.STRING,
         reservation_type: DataTypes.STRING,
-        price_per_person: DataTypes.STRING
+        price_per_person: DataTypes.STRING,
+        is_active: DataTypes.BOOLEAN
     }, {
         sequelize,
         modelName: 'Reservation',
