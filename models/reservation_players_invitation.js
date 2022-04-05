@@ -4,7 +4,7 @@ const IDGenerator = require('../helpers/IDGenerator.js')
 module.exports = (sequelize, DataTypes) => {
     class Reservation_players_invitation extends Model {
         
-        static async storePlayersInvitataion(slot_id, reservation_id, players) {
+        static async storePlayersInvitataion(reservation_id, players) {
             try {
                 if (players.length > 0) {
                     let res
@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
                         await sequelize.transaction((t) => {
                             return Reservation_players_invitation.create({
                                 id: invitationID,
-                                slot_id: slot_id,
                                 reservation_id: reservation_id,
                                 player_id: players[i]
                             })
@@ -35,13 +34,63 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async getReservationInvitationPlayers(reservationID) {
+            try {
+                return Reservation_players_invitation.findAll({
+                    where: {
+                        reservation_id: reservationID
+                    },
+                    raw: true,
+                    attributes: ['player_id']
+                }).then(result => {
+                    return result ? result : []
+                }).catch(() => {
+                    return []
+                })
+            } catch (error) {
+                return []
+            }
+        }
+
+        static async removeReservationInvitations(reservationID) {
+            try {
+                return Reservation_players_invitation.destroy({
+                    where: {
+                        reservation_id: reservationID
+                    }
+                }).then(result => {
+                    return result == 1 ? true : false
+                }).catch(() => {
+                    return false
+                })
+            } catch (error) {
+                return false   
+            }
+        }
+
+        static async removePlayerInvitation(playerID, reservationID) {
+            try {
+                return Reservation_players_invitation.destroy({
+                    where: {
+                        reservation_id: reservationID,
+                        player_id: playerID
+                    }
+                }).then(result => {
+                    return result == 1 ? true : false
+                }).catch(() => {
+                    return false
+                })
+            } catch (error) {
+                return false
+            }
+        }
+
     };
     Reservation_players_invitation.init({
         id: {
             primaryKey: true,
             type: DataTypes.BIGINT
         },
-        slot_id: DataTypes.BIGINT,
         reservation_id: DataTypes.BIGINT,
         player_id: DataTypes.BIGINT
     }, {

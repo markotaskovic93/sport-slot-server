@@ -22,7 +22,6 @@ class SlotController {
     static async findSlots(req, res) {
         try {
             const slots = await Slot.filterSlots(req.params)
-            console.log(slots)
             for(let i = 0; i < slots.body.length; i++) {
                 const courtInfo = await Court.getCourtInfo(slots.body[i].court_id)
                 slots.body[i].court_info = courtInfo.body

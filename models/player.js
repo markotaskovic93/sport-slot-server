@@ -501,6 +501,24 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async getBalance(playerID) {
+            try {
+                return Player.findOne({
+                    where: {
+                        id: playerID
+                    },
+                    raw: true,
+                    attributes: ['balance']
+                }).then(result => {
+                    return result
+                }).catch(() => {
+                    return 0
+                })
+            } catch (error) {
+                return 0
+            }
+        }
+
 
     } // Model class
 

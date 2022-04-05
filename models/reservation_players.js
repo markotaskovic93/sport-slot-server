@@ -23,6 +23,40 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async getReservationPlayers(reservationID) {
+            try {
+                return Reservation_players.findAll({
+                    where: {
+                        reservation_id: reservationID
+                    },
+                    raw: true,
+                    attributes: ['player_id']
+                }).then(result => {
+                    return result ? result : []
+                }).catch(() => {
+                    return []
+                })
+            } catch (error) {
+                return []
+            }
+        }
+
+        static async removeReservationPlayers(reservationID) {
+            try {
+                return Reservation_players.destroy({
+                    where: {
+                        reservation_id: reservationID
+                    }
+                }).then(result => {
+                    return result == 1 ? true : false
+                }).catch(() => {
+                    return false
+                })
+            } catch (error) {
+                return false   
+            }
+        }
+
     };
     Reservation_players.init({
         id: {

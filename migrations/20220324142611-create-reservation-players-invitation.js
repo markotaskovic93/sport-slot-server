@@ -6,9 +6,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      slot_id: {
-        type: Sequelize.BIGINT
-      },
       reservation_id: {
         type: Sequelize.BIGINT
       },

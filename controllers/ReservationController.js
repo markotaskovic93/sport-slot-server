@@ -1,8 +1,11 @@
 const Reservation = require('../models/').Reservation
 const Slot = require('../models/').Slot
 const PlayersInvitation = require('../models/').Reservation_players_invitation
+const PlayersRequests = require('../models/').Reservation_players_requests
 const Player = require('../models/').Player
 const PlayersTransaction = require('../models/').Players_transactions_history
+const ReservationPlayers = require('../models/').Reservation_players
+const PlayersNotificaiton = require('../models/').Players_notification
 
 class ReservationController {
 
@@ -35,13 +38,64 @@ class ReservationController {
                     req.body.price_per_person = reservationPrice.toFixed()
                 }
 
-                if (playerBalance >= reservationPrice) {
+                if (playerBalance.balance >= reservationPrice) {
                     
+                    if (slot.result.slot_has_reservation && reservation_type === "direct") {
+
+                        // get all players to send notification
+                        const reservationPlayersReq = await PlayersRequests.getReservationReqPlayers(slot.result.slot_reservation_id)
+                        const reservationInvitationPlayers = await PlayersInvitation.getReservationInvitationPlayers(slot.result.slot_reservation_id)
+                        const reservationPlayers = await ReservationPlayers.getReservationPlayers(slot.result.slot_reservation_id)
+
+                        await PlayersRequests.removeReservationRequests(slot.result.slot_reservation_id)
+                        await PlayersInvitation.removeReservationInvitations(slot.result.slot_reservation_id)
+                        await ReservationPlayers.removeReservationInvitations(slot.result.slot_reservation_id)
+
+                        const notificationData = {
+                            slotID: slot_id,
+                            reservationID: slot.result.slot_reservation_id,
+                            notificationType: "cancelation-by-booking",
+                            notificationDesc: "Sorry slot you try to book is booked"
+                        }
+
+                        if (reservationPlayersReq) {
+                            for(let i = 0; i < reservationPlayersReq.length; i++) {
+                                notificationData.playerID = reservationPlayersReq[i].player_id
+                                const response = await PlayersNotificaiton.createNotification(notificationData)
+                                if(response) {
+                                    // WS notification service
+                                }
+                            }
+                        }
+                        if (reservationInvitationPlayers) {
+                            for(let i = 0; i < reservationInvitationPlayers.length; i++) {
+                                notificationData.playerID = reservationInvitationPlayers[i].player_id
+                                const response = await PlayersNotificaiton.createNotification(notificationData)
+                                if(response) {
+                                    // WS notification service
+                                }
+                            }
+                        }
+                        if (reservationPlayers) {
+                            for(let i = 0; i < reservationPlayers.length; i++) {
+                                notificationData.playerID = reservationPlayers[i].player_id
+                                const response = await PlayersNotificaiton.createNotification(notificationData)
+                                if(response) {
+                                    // WS notification service
+                                }
+                            }
+                        }
+                        await Reservation.removeReservation(slot.result.slot_reservation_id)
+                    }
+
                     // Step 2.
                     const reservation = await Reservation.createReservationForSlot(req.body)
+                    // const reservation = {
+                    //     actionStatus: false
+                    // }
                     if (reservation.actionStatus) {
                         
-                        const playerInvitation = await PlayersInvitation.storePlayersInvitataion(slot_id, reservation.body.id, players)
+                        await PlayersInvitation.storePlayersInvitataion(reservation.body.id, players)
 
                         // Step 4.
                         if (reservation_type === "direct") {
@@ -62,18 +116,9 @@ class ReservationController {
                                 if (transaction) {
                                     
                                     // Step 6. 
+                                    await ReservationPlayers.addPlayerToReservation(reservation.body.id, player_id)
                                     const bookSlot = await Slot.directBookSlot(slot_id)
                                     if (bookSlot.actionStatus) {
-                                        // Step 7.
-                                        if (slot.result.slot_has_reservation) {
-                                            const removePreviousReservation = await Reservation.removeReservation(slot.result.slot_reservation_id)
-                                            if (removePreviousReservation) {
-                                        
-                                                //const removeReservationPlayers = await 
-                                            }
-                                        } 
-                                        
-                                        // Step 9.
                                         return res.status(200).json(bookSlot) // Woooohhoooo, slot is booked, you can play the fucking game !!!
                                     } else {
                                         return res.status(200).json({
@@ -93,11 +138,11 @@ class ReservationController {
                                     messageCode: 502
                                 })
                             }
-
                         } else {
                             const bookSlot = await Slot.groupBookSlot(slot_id, reservation.body.id)
                             if (bookSlot.actionStatus) {
-                                return res.status(200).json(bookSlot) // Woooohhoooo, slot is booked, you can play the fucking game !!!
+                                await ReservationPlayers.addPlayerToReservation(reservation.body.id, player_id)
+                                return res.status(200).json(bookSlot)
                             } else {
                                 return res.status(200).json({
                                     message: "Error rise while booking group slot",

@@ -132,6 +132,27 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async bookSlotByGroup(slotID) {
+            try {
+                await sequelize.transaction((t) => {
+                    return Slot.update({
+                        slot_booked: true,
+                        slot_active: false
+                    }, {
+                        where: {
+                            id: slotID
+                        }
+                    })
+                }).then(result => {
+                    return result === 1 ? true : false
+                }).catch(() => {
+                    return false
+                })
+            } catch (error) {
+                return false
+            }
+        }
+
         // Ostaje
         static async unbookSlot(slot_id) {
             try {

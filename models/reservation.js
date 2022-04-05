@@ -74,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
                         is_active: true
                     },
                     raw: true,
-                    attributes: ['players_needed', 'players_accepted', 'reservation_type', 'price_per_person']
+                    attributes: ['players_needed', 'players_accepted', 'reservation_type', 'price_per_person', 'slot_id']
                 }).then(result => {
                     return result ? result : null
                 }).catch(() => {
@@ -114,7 +114,7 @@ module.exports = (sequelize, DataTypes) => {
                         }
                     })
                 }).then(result => {
-                    return result === 1 ? true : false
+                    return result == 1 ? true : false
                 }).catch(() => {
                     return false
                 })
