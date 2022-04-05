@@ -198,17 +198,12 @@ module.exports = (sequelize, DataTypes) => {
                     raw: true,
                     attributes: ['balance']
                 }).then(result => {
-                    return result.balance
+                    return result
                 }).catch(() => {
                     return false
                 })
             } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                } 
+                return false 
             }
         }
 

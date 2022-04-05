@@ -7,12 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         static async addPlayerToReservation(reservation_id, player_id) {
             try {
                 const generateID = IDGenerator()
-                await sequelize.transaction((t) => {
-                    return Reservation_players.create({
-                        id: generateID,
-                        reservation_id: reservation_id,
-                        player_id: player_id
-                    })
+                return Reservation_players.create({
+                    id: generateID,
+                    reservation_id: reservation_id,
+                    player_id: player_id
                 }).then(result => {
                     return result ? true : false
                 }).catch(() => {

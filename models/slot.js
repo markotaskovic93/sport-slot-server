@@ -134,17 +134,15 @@ module.exports = (sequelize, DataTypes) => {
 
         static async bookSlotByGroup(slotID) {
             try {
-                await sequelize.transaction((t) => {
-                    return Slot.update({
-                        slot_booked: true,
-                        slot_active: false
-                    }, {
-                        where: {
-                            id: slotID
-                        }
-                    })
+                return Slot.update({
+                    slot_booked: true,
+                    slot_active: false
+                }, {
+                    where: {
+                        id: slotID
+                    }
                 }).then(result => {
-                    return result === 1 ? true : false
+                    return result == 1 ? true : false
                 }).catch(() => {
                     return false
                 })

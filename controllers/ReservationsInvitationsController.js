@@ -17,14 +17,15 @@ class ReservationsInvitationsController {
                 if (action === 'accept') {
                     
                     if (reservation.reservation_type === 'group') {
-                        const playerBalance = Player.getBalance(player_id)
-                        
-                        if (parseInt(playerBalance) >= parseInt(reservation.price_per_person)) {
-                            const currentNumberOfAcceptedPlayers = parseInt(reservation.player_accepted) + 1
+                        const playerBalance = await Player.getBalance(player_id)
+
+                        if (parseInt(playerBalance.balance) >= parseInt(reservation.price_per_person)) {
+                            const currentNumberOfAcceptedPlayers = parseInt(reservation.players_accepted) + 1
                             const addPlayerToReservation = await ReservationPlayers.addPlayerToReservation(reservation_id, player_id)
 
                             if (addPlayerToReservation) {
                                 await PlayersInvitation.removePlayerInvitation(player_id, reservation_id)
+
                                 const updateReservationPlayersAccepted = await Reservation.updatePlayersAccepted(reservation_id, currentNumberOfAcceptedPlayers)
                                 
                                 if (updateReservationPlayersAccepted) {
@@ -40,7 +41,7 @@ class ReservationsInvitationsController {
                                             }
                                             if (reservationPlayers) {
                                                 for(let i = 0; i < reservationPlayers.length; i++) {
-                                                    notificationData.player_id = reservationPlayers[i].player_id
+                                                    notificationData.playerID = reservationPlayers[i].player_id
                                                     await PlayersNotificaiton.createNotification(notificationData)
                                                 }
                                             }
@@ -52,7 +53,7 @@ class ReservationsInvitationsController {
                                     } else {
                                         return res.status(200).json({
                                             message: "You accept slot invitation",
-                                            code: 323
+                                            code: 324
                                         })
                                     }
                                 }

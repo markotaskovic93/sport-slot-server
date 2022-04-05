@@ -87,21 +87,19 @@ module.exports = (sequelize, DataTypes) => {
 
         static async updatePlayersAccepted(reservation_id, value) {
             try {
-                await sequelize.transaction((t) => {
-                    return Reservation.update({
-                        players_accepted: value
-                    }, {
-                        where: {
-                            id: reservation_id
-                        }
-                    })
+                return Reservation.update({
+                    players_accepted: value
+                }, {
+                    where: {
+                        id: reservation_id
+                    }
                 }).then(result => {
-                    return result === 1 ? true : false
+                    return result == 1 ? true : false
                 }).catch(() => {
                     return false
-                })  
+                })
             } catch (error) {
-                return error
+                return false
             }
         }
 
