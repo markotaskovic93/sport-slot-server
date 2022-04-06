@@ -45,49 +45,57 @@ module.exports = (sequelize, DataTypes) => {
                     state, city, street, gender, age, 
                     phone, password, bio, sport, terms
                 } = data
-                const hashedPassword = bcrypt.hashSync(password, 10)
-                const generatedID = IDGenerator()
-                return sequelize.transaction((t) => {
-                    return Player.create({
-                        id: generatedID,
-                        full_name: full_name,
-                        birthday: birthday,
-                        height: height,
-                        email: email,
-                        state: state,
-                        city: city,
-                        street: street,
-                        gender: gender,
-                        age: age,
-                        phone: phone,
-                        password: hashedPassword,
-                        bio: bio,
-                        prefered_sport: sport,
-                        balance: 0,
-                        email_verified: false,
-                        phone_verified: false,
-                        terms_conditions: terms,
-                        blocked: false,
-                        notification_invites: true,
-                        notification_messages: true,
-                        notification_reminders: true,
-                        notification_promotions: true
+                if (terms) {
+                    const hashedPassword = bcrypt.hashSync(password, 10)
+                    const generatedID = IDGenerator()
+                    return sequelize.transaction((t) => {
+                        return Player.create({
+                            id: generatedID,
+                            full_name: full_name,
+                            birthday: birthday,
+                            height: height,
+                            email: email,
+                            state: state,
+                            city: city,
+                            street: street,
+                            gender: gender,
+                            age: age,
+                            phone: phone,
+                            password: hashedPassword,
+                            bio: bio,
+                            prefered_sport: sport,
+                            balance: 0,
+                            email_verified: false,
+                            phone_verified: false,
+                            terms_conditions: terms,
+                            blocked: false,
+                            notification_invites: true,
+                            notification_messages: true,
+                            notification_reminders: true,
+                            notification_promotions: true
+                        })
+                    }).then((result) => {// Transaction STARTED
+                        return {
+                            actionStatus: true,
+                            status: 200,
+                            message: "Player is created",
+                            body: result 
+                        }
+                    }).catch((err) => {// Transaction ROOLBACK
+                        return {
+                            actionStatus: false,
+                            status: 403,
+                            message: "Error while creating player",
+                            body: err.errors 
+                        }
                     })
-                }).then((result) => {// Transaction STARTED
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Player is created",
-                        body: result 
-                    }
-                }).catch((err) => {// Transaction ROOLBACK
+                } else {
                     return {
                         actionStatus: false,
-                        status: 403,
-                        message: "Error while creating player",
-                        body: err.errors 
+                        status: 400,
+                        message: "Terms and conditions are not accepted"
                     }
-                })
+                }
             } catch (error) {
                 return {
                     actionStatus: false,
@@ -519,8 +527,8 @@ module.exports = (sequelize, DataTypes) => {
 
     Player.init({
         id: {
-        primaryKey: true,
-        type: DataTypes.BIGINT
+            primaryKey: true,
+            type: DataTypes.BIGINT
         },
         full_name: DataTypes.STRING,
         birthday: DataTypes.STRING,

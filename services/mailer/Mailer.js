@@ -7,25 +7,15 @@ class Mailer {
         this.transporter = nodemailer.createTransport(config)
     }
 
-    async sendEmail(mailData) {
+    async sendEmail() {
         try {
-            this.transporter.sendMail(mailData, (error, info) => {
-                if (error) {
-                    return {
-                        actionStatus: false,
-                        status: 400,
-                        message: "Mail is not sent!",
-                        body: error
-                    }
-                } else {
-                    return {
-                        actionStatus: true,
-                        status: 200,
-                        message: "Mail is sent to the user.",
-                        body: info.response
-                    } 
-                }
-            })
+            this.transporter.sendMail({
+                from: '"Fred Foo 👻" <foo@example.com>', // sender address
+                to: "markotaskovic93@gmail.com", // list of receivers
+                subject: "Hello ✔", // Subject line
+                text: "Hello world?", // plain text body
+                html: "<b>Hello world?</b>", // html body
+              })
         } catch (error) {
             return {
                 actionStatus: false,

@@ -31,14 +31,17 @@ class PlayerController {
     }
 
     static async createPlayerAccount(req, res) {
-        const response = await Player.storePlayerData(req.body)
-        // const mailer = new Mailer()
-        // const email = await mailer.sendEmail()
-        //if(email.actionStatus) {
+        try {
+            const response = await Player.storePlayerData(req.body)
+            const mailer = new Mailer()
+            await mailer.sendEmail()
             return res.status(response.status).json(response)
-        // } else {
-        //     // TODO: What will happens here
-        // }
+        } catch (error) {
+            return res.status(400).json({
+                message: "Server error",
+                code: 100
+            })
+        }
     }
 
     static async updatePlayerAccount(req, res) {
