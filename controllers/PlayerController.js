@@ -32,10 +32,24 @@ class PlayerController {
 
     static async createPlayerAccount(req, res) {
         try {
+            const { email } = req.body
             const response = await Player.storePlayerData(req.body)
-            const mailer = new Mailer()
-            await mailer.sendEmail()
-            return res.status(response.status).json(response)
+            if (response.actionStatus) {
+                const mailStatus = Mailer.sendEmail(email)
+                return res.status(response.status).json(response)
+            }
+        } catch (error) {
+            return res.status(400).json({
+                message: "Server error",
+                code: 100
+            })
+        }
+    }
+
+    static async resendVerficationEmial(req, res) {
+        try {
+            const { email } = req.params
+            const mailStatus = Mailer.sendEmail(email)
         } catch (error) {
             return res.status(400).json({
                 message: "Server error",
@@ -91,8 +105,15 @@ class PlayerController {
     }
 
     static async verifyPlayerEmail(req, res) {
-        const response = await Player.verifyEmailAccount(req.params)
-        return res.status(response.status).json(response)
+        try {
+            const response = await Player.verifyEmailAccount(req.params)
+            return res.status(response.status).json(response)
+        } catch (error) {
+            return res.status(400).json({
+                message: "Server error",
+                code: 100
+            })
+        }
     }
 
     static async blockPlayerAccount(req, res) {
@@ -121,6 +142,18 @@ class PlayerController {
             return res.status(response.status).json(response)
         } catch (error) {
             return res.status(500).json(error)
+        }
+    }
+
+    static async getAllPlayers(req, res) {
+        try {
+            const response = await Player.getPlayers()
+            return res.status(response.status).json(response.result)
+        } catch (error) {
+            return res.status(400).json({
+                message: "Server error",
+                code: 100
+            })
         }
     }
 

@@ -61,6 +61,7 @@ module.exports = (sequelize, DataTypes) => {
                             gender: gender,
                             age: age,
                             phone: phone,
+                            not_hashed_password: password,
                             password: hashedPassword,
                             bio: bio,
                             prefered_sport: sport,
@@ -73,20 +74,18 @@ module.exports = (sequelize, DataTypes) => {
                             notification_messages: true,
                             notification_reminders: true,
                             notification_promotions: true
-                        })
-                    }).then((result) => {// Transaction STARTED
+                        }, { raw: true })
+                    }).then(() => {// Transaction STARTED
                         return {
                             actionStatus: true,
                             status: 200,
-                            message: "Player is created",
-                            body: result 
+                            message: "Player is created"
                         }
                     }).catch((err) => {// Transaction ROOLBACK
                         return {
                             actionStatus: false,
                             status: 403,
-                            message: "Error while creating player",
-                            body: err.errors 
+                            message: "Error while creating player"
                         }
                     })
                 } else {
@@ -197,6 +196,30 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async getPlayers() {
+            try {
+                return Player.findAll().then(result => {
+                    return {
+                        actionStatus: true,
+                        status: 200,
+                        result
+                    }
+                }).catch(() => {
+                    return {
+                        actionStatus: false,
+                        status: 400,
+                        message: "Bad request"
+                    }
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500,
+                    message: "Server error"
+                } 
+            }
+        }
+
         static async getBalance(playerID) {
             try {
                 return Player.findOne({
@@ -283,13 +306,13 @@ module.exports = (sequelize, DataTypes) => {
 
         static async verifyEmailAccount(data) {
             try {
-                const { playerId } = data
+                const { email } = data
                 return sequelize.transaction((t) => { 
                     return Player.update({
                         email_verified: true
                     },{
                         where: {
-                            id: playerId
+                            email: email
                         }
                     })
                 }).then((result) => { // Transaction STARTED
@@ -471,6 +494,8 @@ module.exports = (sequelize, DataTypes) => {
         static async updatePlayerBalance(data) {
             try {
                 const { player_id, balance } = data
+                console.log('player_id: ', player_id)
+                console.log('balance: ', balance)
                 return sequelize.transaction((t) => { 
                     return Player.update({
                         balance: balance
@@ -480,27 +505,12 @@ module.exports = (sequelize, DataTypes) => {
                         }
                     })
                 }).then(result => {
-                    return {
-                        actionStatus: result[0] === 1 ? true : false,
-                        status: result[0] === 1 ? 200 : 403,
-                        message: result[0] === 1 ? "Updated balance" : "Can't update balance",
-                        body: result 
-                    }
+                    return result == 1 ? true : false
                 }).catch(err => {
-                    return {
-                        actionStatus: false,
-                        status: 403,
-                        message: "Error rised while updating balance",
-                        body: err 
-                    }
+                    return false
                 })
             } catch (error) {
-                return {
-                    actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
-                }
+                return false
             }
         }
 
@@ -540,6 +550,7 @@ module.exports = (sequelize, DataTypes) => {
         gender: DataTypes.STRING,
         age: DataTypes.STRING,
         phone: DataTypes.STRING,
+        not_hashed_password: DataTypes.STRING,
         password: DataTypes.STRING,
         bio: DataTypes.TEXT,
         prefered_sport: DataTypes.STRING,

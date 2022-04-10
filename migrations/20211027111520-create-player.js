@@ -46,6 +46,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      not_hashed_password: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       password: {
         allowNull: false,
         type: Sequelize.STRING

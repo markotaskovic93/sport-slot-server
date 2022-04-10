@@ -49,7 +49,7 @@ class ReservationController {
 
                         await PlayersRequests.removeReservationRequests(slot.result.slot_reservation_id)
                         await PlayersInvitation.removeReservationInvitations(slot.result.slot_reservation_id)
-                        await ReservationPlayers.removeReservationInvitations(slot.result.slot_reservation_id)
+                        await ReservationPlayers.removeReservationPlayers(slot.result.slot_reservation_id)
 
                         const notificationData = {
                             slotID: slot_id,
@@ -86,9 +86,10 @@ class ReservationController {
                             }
                         }
                         await Reservation.removeReservation(slot.result.slot_reservation_id)
-                    }
+                    } 
 
-                    // Step 2.
+
+                    // this is when slot don't have reservation and is direct
                     const reservation = await Reservation.createReservationForSlot(req.body)
                     // const reservation = {
                     //     actionStatus: false
@@ -100,9 +101,9 @@ class ReservationController {
                         // Step 4.
                         if (reservation_type === "direct") {
 
-                            const updatedBalance = playerBalance - parseInt(slot.result.slot_price)
+                            const updatedBalance = playerBalance.balance - parseInt(slot.result.slot_price)
                             const updatingBalance = await Player.updatePlayerBalance({ player_id: player_id, balance: updatedBalance })
-                            if (updatingBalance.actionStatus) {
+                            if (updatingBalance) {
     
                                 // Step 5.
                                 const transaction = await PlayersTransaction.createTransaction({

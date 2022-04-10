@@ -85,6 +85,24 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
 
+        static async setReservationInactive(reservationID) {
+            try {
+                return Reservation.update({
+                    is_active: false
+                }, {
+                    where: {
+                        id: reservationID
+                    }
+                }).then(result => {
+                    return result == 1 ? true : false
+                }).catch(() => {
+                    return false
+                })
+            } catch (error) {
+                return false   
+            }
+        }
+
         static async updatePlayersAccepted(reservation_id, value) {
             try {
                 return Reservation.update({

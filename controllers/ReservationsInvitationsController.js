@@ -4,6 +4,7 @@ const ReservationPlayers = require('../models/').Reservation_players
 const Player = require('../models/').Player
 const Slot = require('../models/').Slot
 const PlayersNotificaiton = require('../models/').Players_notification
+const PlayerTransaction = require('../models/').Players_transactions_history
 
 class ReservationsInvitationsController {
 
@@ -43,7 +44,17 @@ class ReservationsInvitationsController {
                                                 for(let i = 0; i < reservationPlayers.length; i++) {
                                                     notificationData.playerID = reservationPlayers[i].player_id
                                                     await PlayersNotificaiton.createNotification(notificationData)
+                                                    await PlayerTransaction.createTransaction({
+                                                        player_id: reservationPlayers[i].player_id,
+                                                        transaction_type: "Slot booking",
+                                                        transaction_desc: `Booking of slot reservation ${reservation_id}`,
+                                                        transaction_amount: parseInt(reservation.price_per_person)
+                                                    })
+                                                    const playerBalance = await Player.getBalance(reservationPlayers[i].player_id)
+                                                    const updatedBalance = parseInt(playerBalance.balance) - parseInt(reservation.price_per_person)
+                                                    await Player.updatePlayerBalance({ player_id: reservationPlayers[i].player_id, balance: updatedBalance })
                                                 }
+                                                await Reservation.setReservationInactive(reservation_id)
                                             }
                                             return res.status(200).json({
                                                 message: "You accept slot invitation",
