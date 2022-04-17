@@ -12,48 +12,60 @@ module.exports = (sequelize, DataTypes) => {
                     id: generateFeeID,
                     slot_base_fee: slot_base_fee,
                     slot_additional_fee: slot_additional_fee
-                }).then(result => {
+                }).then(() => {
                     return {
                         actionStatus: true,
-                        status: 200,
-                        message: "Fees are added",
-                        body: result 
+                        status: 200
                     }
-                }).catch(err => {
+                }).catch(() => {
                     return {
-                        actionStatus: true,
-                        status: 400,
-                        message: "Error while creating fee",
-                        body: err 
+                        actionStatus: false,
+                        status: 400
                     }
                 })
             } catch (error) {
                 return {
                     actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
+                    status: 500
                 }        
             }
         }
 
-        static async getSlotFee() {
+        static async getFees() {
             try {
                 return Fee.findAll({
                     raw: true, 
                     attributes: ['slot_base_fee']
                 }).then(result => {
                     return result
-                }).catch(err => {
-                    return errr
+                }).catch(() => {
+                    return []
                 })
             } catch (error) {
                 return {
                     actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
+                    status: 500
                 }    
+            }
+        }
+
+        static async destroyFees () {
+            try {
+                return sequelize.transaction((t) => {
+                    return Fee.destroy({
+                        where: {},
+                        truncate: true
+                    })
+                }).then(result => {
+                    return result == 0 ? true : false
+                }).catch(() => {
+                    return false
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500
+                }
             }
         }
 

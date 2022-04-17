@@ -38,9 +38,9 @@ module.exports = (sequelize, DataTypes) => {
                             slot_blocked: false,
                             slot_active: true
                         })
-                    }).then((result) => {// Transaction STARTED
+                    }).then(() => {
                         res = true
-                    }).catch((err) => {// Transaction ROOLBACK
+                    }).catch(() => {
                         res = false
                     })
                 }

@@ -32,10 +32,18 @@ const ReservationsRequestssController = require('../controllers/ReservationReque
 // Player Routes
 router.post('/player/login', [], (req, res) => PlayerController.loginPlayer(req, res)) // done
 router.post('/player/create-player', [validator.body(createPlayerValidation)], (req, res) => PlayerController.createPlayerAccount(req, res)) // done
+
+
+router.post('/player/seed-players', [], (req, res) => PlayerController.seedPlayers(req, res)) //
+
+
 router.put('/player/update-player', [validator.query(updatePlayerValidation)], (req, res) => PlayerController.updatePlayerAccount(req, res)) // done
 router.get('/player/get-player/:id', [validator.query(getPlayerByID)], (req, res) => PlayerController.getPlayer(req, res)) // done
 router.get('/player/get-players', [], (req, res) => PlayerController.getAllPlayers(req, res)) //
+
 router.delete('/player/delete-player/:id', [], (req, res) => PlayerController.deletePlayerAccount(req, res)) // done
+router.delete('/player/delete-players', [], (req, res) => PlayerController.deleteAllPlayers(req, res)) //
+
 router.get('/player/find-players/:state/:city/:full_name?', [], (req, res) => PlayerController.findPlayersByStateCityName(req, res)) // done
 router.get('/player/verify-email/:email', [], (req, res) => PlayerController.verifyPlayerEmail(req, res)) // done
 router.get('/player/resend-email/:email', [], (req, res) => PlayerController.resendVerficationEmial(req, res)) //
@@ -95,12 +103,13 @@ router.get('/court-slot/get-slots/:date/:time/:city/:state/:sport?/:bookingType?
 router.post('/reservation/create-reservation', [], (req, res) => ReservationController.createSlotReservation(req, res)) // create pay now reservation
 
 // Reservation Invitation routes
-router.get('/reservation-invitation/:player_id/:reservation_id/:action', [], (req, res) => ReservationsInvitationsController.respondToInvitation(req, res)) //
+router.get('/reservation-invitation/:player_id/:reservation_id/:action', [], (req, res) => ReservationsInvitationsController.respondToInvitation(req, res))
 
 // Reservation Request routes
-router.get('/reservation-requests/:player_id/:reservation_id/:action', [], (req, res) => ReservationsRequestssController.respondToRequest(req, res)) // 
+router.get('/reservation-requests/:player_id/:reservation_id/:action', [], (req, res) => ReservationsRequestssController.respondToRequest(req, res))
 
 // Fees routes
-router.post('/fee/create-fee', [], (req, res) => FeeController.createSlotFee(req, res)) // add fees
+router.post('/fee/create-fee', [], (req, res) => FeeController.createSlotFee(req, res))
+router.delete('/fee/remove-fees', [], (req, res) => FeeController.removeFees(req, res))
 
 module.exports = router

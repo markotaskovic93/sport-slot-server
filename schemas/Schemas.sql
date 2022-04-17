@@ -102,6 +102,7 @@ CREATE TABLE IF NOT EXISTS public."Players"
     age character varying(255) COLLATE pg_catalog."default",
     email character varying(255) COLLATE pg_catalog."default" NOT NULL,
     phone character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    not_hashed_password character varying(255) COLLATE pg_catalog."default" NOT NULL,
     password character varying(255) COLLATE pg_catalog."default" NOT NULL,
     bio text COLLATE pg_catalog."default",
     prefered_sport character varying(255) COLLATE pg_catalog."default" NOT NULL,

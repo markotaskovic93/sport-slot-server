@@ -10,12 +10,12 @@ class SlotController {
             const { court_id } = req.body.slots[0]
             const courtIsAvailable = await Court.courtIsAvailable(court_id)
             if (courtIsAvailable.status) {
-                const applayedFee = await Fee.getSlotFee()
+                const applayedFee = await Fee.getFees() 
                 const response = await Slot.storeSlots(req.body, courtIsAvailable.result.court_available_sports, applayedFee[0].slot_base_fee)
                 return res.status(200).json(response)
             }
         } catch (error) {
-            return req.status(500).json(error)
+            return res.status(500).json(error)
         }
     }
 
@@ -34,7 +34,7 @@ class SlotController {
             }
             return res.status(200).json(slots)
         } catch (error) {
-            return req.status(500).json(error)
+            return res.status(500).json(error)
         }
     }
 
@@ -43,7 +43,7 @@ class SlotController {
             const response = await Slot.getNumberOfSlots(req.params)
             return res.status(200).json(response)
         } catch (error) {
-            return req.status(500).json(error)
+            return res.status(500).json(error)
         }
     }
 
@@ -53,7 +53,7 @@ class SlotController {
             const response = await Slot.bookSlot(slotId)
             return res.status(response.status).json(response)
         } catch (error) {
-            return req.status(500).json(error)
+            return res.status(500).json(error)
         }
     }
 
@@ -63,7 +63,7 @@ class SlotController {
             const response = await Slot.unbookSlot(slotId)
             return res.status(response.status).json(response)
         } catch (error) {
-            return req.status(500).json(error)
+            return res.status(500).json(error)
         }
     }
 

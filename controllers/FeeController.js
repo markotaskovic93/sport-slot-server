@@ -31,6 +31,15 @@ class FeeController {
             res.status(500).json(error)
         }
     }
+
+    static async removeFees(req, res) {
+        try {
+            const response = Fee.destroyFees()
+            return res.status(200).json(response)
+        } catch (error) {
+            res.status(500).json(error)
+        }
+    }
     
 }
 

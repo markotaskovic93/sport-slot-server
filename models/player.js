@@ -39,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     
         static async storePlayerData(data) {
+            const generatedID = IDGenerator()
             try {
                 const { 
                     full_name, birthday, height, email, 
@@ -47,7 +48,6 @@ module.exports = (sequelize, DataTypes) => {
                 } = data
                 if (terms) {
                     const hashedPassword = bcrypt.hashSync(password, 10)
-                    const generatedID = IDGenerator()
                     return sequelize.transaction((t) => {
                         return Player.create({
                             id: generatedID,
@@ -74,33 +74,35 @@ module.exports = (sequelize, DataTypes) => {
                             notification_messages: true,
                             notification_reminders: true,
                             notification_promotions: true
-                        }, { raw: true })
-                    }).then(() => {// Transaction STARTED
+                        })
+                    }).then(() => {
                         return {
+                            playerID: generatedID,
                             actionStatus: true,
                             status: 200,
-                            message: "Player is created"
+                            playerName: full_name
                         }
-                    }).catch((err) => {// Transaction ROOLBACK
+                    }).catch(() => {
                         return {
+                            playerID: generatedID,
                             actionStatus: false,
                             status: 403,
-                            message: "Error while creating player"
+                            playerName: full_name
                         }
                     })
                 } else {
                     return {
+                        playerID: generatedID,
                         actionStatus: false,
                         status: 400,
-                        message: "Terms and conditions are not accepted"
+                        playerName: full_name,
+                        reason: "Terms and conditions are not accepted"
                     }
                 }
             } catch (error) {
                 return {
                     actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
+                    status: 500
                 }
             } 
         } // store player
@@ -268,6 +270,37 @@ module.exports = (sequelize, DataTypes) => {
                     message: "Server error",
                     body: error
                 } 
+            }
+        }
+
+        static async deletePlayers() {
+            try {
+                return sequelize.transaction(t => {
+                    return Player.destroy({
+                        where: {},
+                        truncate: true
+                    })
+                }).then(result => {
+                    console.log('brisanje igraca... ', result)
+                    if (result === 0) {
+                        return {
+                            actionStatus: true,
+                            status: 200
+                        }
+                    } else {
+                        return {
+                            actionStatus: false,
+                            status: 200
+                        }
+                    }
+                }).catch(err => {
+                    console.log('error je ovaj... ', err)
+                })
+            } catch (error) {
+                return {
+                    actionStatus: false,
+                    status: 500
+                }
             }
         }
 
@@ -469,24 +502,18 @@ module.exports = (sequelize, DataTypes) => {
                 }).then((result) => { // Transaction STARTED
                     return {
                         actionStatus: result[0] === 1 ? true : false,
-                        status: 200,
-                        message: result[0] === 1 ? "Updated notifications" : "Can't update notifications",
-                        body: result 
+                        status: 200
                     }
-                }).catch((err) => { // Transaction ROOLBACK
+                }).catch(() => { // Transaction ROOLBACK
                     return {
                         actionStatus: false,
-                        status: 403,
-                        message: "Can't update notifications",
-                        body: err 
+                        status: 403
                     }
                 })
             } catch (error) {
                 return {
                     actionStatus: false,
-                    status: 500,
-                    message: "Server error",
-                    body: error
+                    status: 500
                 }
             }
         }
@@ -494,8 +521,6 @@ module.exports = (sequelize, DataTypes) => {
         static async updatePlayerBalance(data) {
             try {
                 const { player_id, balance } = data
-                console.log('player_id: ', player_id)
-                console.log('balance: ', balance)
                 return sequelize.transaction((t) => { 
                     return Player.update({
                         balance: balance
@@ -504,13 +529,22 @@ module.exports = (sequelize, DataTypes) => {
                             id: player_id
                         }
                     })
-                }).then(result => {
-                    return result == 1 ? true : false
-                }).catch(err => {
-                    return false
+                }).then(() => {
+                    return {
+                        actionStatus: true,
+                        status: 200
+                    }
+                }).catch(() => {
+                    return {
+                        actionStatus: false,
+                        status: 400
+                    }
                 })
             } catch (error) {
-                return false
+                return {
+                    actionStatus: false,
+                    status: 500
+                }
             }
         }
 
@@ -531,7 +565,6 @@ module.exports = (sequelize, DataTypes) => {
                 return 0
             }
         }
-
 
     } // Model class
 

@@ -30,19 +30,17 @@ module.exports = (sequelize, DataTypes) => {
                         court_promoted: false,
                         blocked: false
                     })
-                }).then((result) => {// Transaction STARTED
+                }).then(() => {// Transaction STARTED
                     return {
                         actionStatus: true,
                         status: 200,
-                        message: "Court is created",
-                        body: result 
+                        message: "Court is created"
                     }
                 }).catch((err) => {// Transaction ROOLBACK
                     return {
                         actionStatus: false,
                         status: 403,
-                        message: "Error while creating court",
-                        body: err.errors 
+                        message: "Error while creating court"
                     }
                 })
                 

@@ -34,10 +34,8 @@ class PlayerController {
         try {
             const { email } = req.body
             const response = await Player.storePlayerData(req.body)
-            if (response.actionStatus) {
-                const mailStatus = Mailer.sendEmail(email)
-                return res.status(response.status).json(response)
-            }
+            // const mailStatus = Mailer.sendEmail(email)
+            return res.status(response.status).json(response)
         } catch (error) {
             return res.status(400).json({
                 message: "Server error",
@@ -73,6 +71,15 @@ class PlayerController {
         const { id } = req.params
         const response = await Player.deletePlayer(id)
         return res.status(response.status).json(response)
+    }
+
+    static async deleteAllPlayers(req, res) {
+        try {
+            const response = await Player.deletePlayers()
+            return res.status(response.status).json(response)
+        } catch (error) {
+            res.status(500).json(error)   
+        }
     }
 
     static async findPlayersByStateCityName(req, res) {
@@ -150,7 +157,28 @@ class PlayerController {
             const response = await Player.getPlayers()
             return res.status(response.status).json(response.result)
         } catch (error) {
-            return res.status(400).json({
+            return res.status(500).json({
+                message: "Server error",
+                code: 100
+            })
+        }
+    }
+
+    static async seedPlayers (req, res) {
+        try {
+            const { players } = req.body
+            const playersAdded = []
+            for(let i = 0; i < players.length; i++) {
+                const resp = await Player.storePlayerData(req.body.players[i])
+                await Player.updatePlayerBalance({
+                    player_id: resp.playerID,
+                    balance: "10000"
+                })
+                playersAdded.push(resp)
+            }
+            return res.status(200).json(playersAdded)
+        } catch (error) {
+            return res.status(500).json({
                 message: "Server error",
                 code: 100
             })
